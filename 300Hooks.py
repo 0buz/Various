@@ -12,7 +12,7 @@ class DeckTests(unittest.TestCase):
         self.assertEqual(self.testdeck.count(), 52)
         self.testdeck.cards.pop()
         self.assertEqual(self.testdeck.count(), 51)
-
+ 
 
 
 
