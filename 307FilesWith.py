@@ -20,7 +20,7 @@ with open("article_titles.txt", "a") as f:       # "a" append; add lines at the 
 with open("article_titles.txt", "r+") as f:  # "r+"  read and write to a file (writing based on cursor)
     f.write("Added using r+.\n")             # r+ adds at the beginning of the file by default; overwriting whatever was there previously on the first line !!!
     f.seek(50)
-    f.write("\nAdded at position 50 with r+.\n")   # r+ adds at the positiong with seek, overwriting whatever was there previously
+    f.write("\nAdded at position 50 with r+.\n")   # r+ adds at the position with seek, overwriting whatever was there previously
     f.seek(2)
     f.write("\n<<<<Added at position 2 with r+.>>>>\n")
 
