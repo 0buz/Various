@@ -45,8 +45,6 @@ driver.find_element_by_css_selector('.searchbcontain').click()
 # jobs = driver.find_elements_by_class_name('jobItem')
 # jobs[len(jobs) - 1].click()
 
-end_of_results = "Loading"
-jobs = driver.find_elements_by_class_name('jobItem')
 # while True:
 #     if end_of_results == "Loading":
 #         ActionChains(driver).move_to_element(driver.find_element_by_css_selector('.nextJobs')).perform()
@@ -62,6 +60,9 @@ jobs = driver.find_elements_by_class_name('jobItem')
 
 print(len(jobs))
 
+end_of_results = "Loading"
+jobs = driver.find_elements_by_class_name('jobItem')
+
 while True:
     if end_of_results != "End of Results":
         element = jobs[len(jobs) - 3]
@@ -74,6 +75,7 @@ while True:
         #jobs[len(jobs) - 3].send_keys(Keys.ARROW_DOWN)
         time.sleep(3)
         WebDriverWait(driver, 3)
+        driver.refresh()
         end_of_results = driver.find_element_by_class_name("nextJobs").text
         jobs = driver.find_elements_by_class_name('jobItem')
         #WebDriverWait(driver, 3).until(EC.element_to_be_clickable((By., 'someid')))
