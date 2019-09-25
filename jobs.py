@@ -30,7 +30,7 @@ if not checked:
     driver.find_element_by_id('ddcl-selInd-i14').click()
 
 # Keyword
-driver.find_element_by_id('txtKey').send_keys("test")
+driver.find_element_by_id('txtKey').send_keys("jira")
 
 # Search
 driver.find_element_by_css_selector('.searchbcontain').click()
@@ -58,39 +58,45 @@ driver.find_element_by_css_selector('.searchbcontain').click()
 #     else:
 #         break
 
-print(len(jobs))
+#print(len(jobs))
 
 end_of_results = "Loading"
-jobs = driver.find_elements_by_class_name('jobItem')
 
-while True:
-    if end_of_results != "End of Results":
-        element = jobs[len(jobs) - 3]
-        id = element.get_property('id')
-        ActionChains(driver).move_to_element(element).perform()
+jobs = driver.find_elements_by_class_name('jobItem')
+start = 0
+end = len(jobs)
+job_counter = driver.find_element_by_class_name('job-counter').text
+
+while job_counter:
+    job_counter = driver.find_element_by_class_name('job-counter').text
+    for job in jobs[start:end]:
+        driver.execute_script("arguments[0].scrollIntoView(true);", job)
+        job.click()
+        print(jobs.index(job))
+        id = job.get_property('id')
         WebDriverWait(driver, 20).until(EC.element_to_be_clickable((By.ID, id)))
-        element.click()
-       # ActionChains(driver).send_keys_to_element(driver.)
-        #jobs[len(jobs) - 3].click()
-        #jobs[len(jobs) - 3].send_keys(Keys.ARROW_DOWN)
-        time.sleep(3)
-        WebDriverWait(driver, 3)
-        driver.refresh()
-        end_of_results = driver.find_element_by_class_name("nextJobs").text
-        jobs = driver.find_elements_by_class_name('jobItem')
-        #WebDriverWait(driver, 3).until(EC.element_to_be_clickable((By., 'someid')))
-    else:
-        break
+        ActionChains(driver).send_keys_to_element(job, Keys.ARROW_DOWN)
+        time.sleep(1)
+    jobs = driver.find_elements_by_class_name('jobItem')
+    start = end
+    end = len(jobs)
+
+print("You made it!")
 
 count = 0
+jobs = driver.find_elements_by_class_name('jobItem')
 for job in jobs:
+    driver.execute_script("arguments[0].scrollIntoView(true);", job)
     job.click()
-    job_title = job.find_element_by_class_name('jobResultsTitle').text
-    xp = f"//*a[@title='{job_title}']"
-    WebDriverWait(driver, 20).until(EC.presence_of_element_located((By.XPATH, xp)))
-    innerHTML = driver.find_element_by_id('JobDetailPanel').get_property('innerHTML')
-    job.send_keys(Keys.ARROW_DOWN)
-    count = +1
+    id = job.get_property('id')
+    WebDriverWait(driver, 20).until(EC.element_to_be_clickable((By.ID, id)))
+    # job_title = job.find_element_by_class_name('jobResultsTitle').text
+    # xp = f"//*a[@title='{job_title}']"
+    # WebDriverWait(driver, 20).until(EC.presence_of_element_located((By.XPATH, xp)))
+    # innerHTML = driver.find_element_by_id('JobDetailPanel').get_property('innerHTML')
+    ActionChains(driver).send_keys_to_element(job, Keys.ARROW_DOWN)
+    time.sleep(2)
+    count +=1
 
 with open("structure.txt", "w") as structure:
     for job in jobs:
@@ -101,7 +107,9 @@ with open("structure.txt", "w") as structure:
         innerHTML = driver.find_element_by_id('JobDetailPanel').get_property('innerHTML')
         structure.write("\nAdded job " + str(jobs.index(job)) + innerHTML)
 
-#
+#   # ActionChains(driver).send_keys_to_element(driver.)
+    #jobs[len(jobs) - 3].click()
+    #jobs[len(jobs) - 3].send_keys(Keys.ARROW_DOWN)
 # index = 0
 # #with open("structure.txt", "a") as structure:
 # while not end_of_results:
