@@ -1,5 +1,6 @@
 from csv import reader, writer, DictReader, DictWriter
 
+
 def add_user(first_name, last_name):
     with open("users.csv", "a") as csvfile:
         csv_writer = writer(csvfile)
