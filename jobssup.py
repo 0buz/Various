@@ -1,5 +1,9 @@
 from bs4 import BeautifulSoup
 import lxml
+from misclib import filename
+# import html
+# html.unescape('Suzy &amp; John')
+
 
 with open("structure.txt", "r") as f:
     html = f.read()
@@ -26,7 +30,8 @@ for agency in agencies:
 
 # print(job_titles)
 
-file >>>>> work on dynamic filename !!!!!!!!!!!!!!!!!
+
+file = filename('raw', 'txt')
 
 with open(file,"w") as f:
 

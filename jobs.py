@@ -4,7 +4,10 @@ from selenium.webdriver.common.by import By
 from selenium.webdriver.support import expected_conditions as EC
 from selenium.webdriver.common.keys import Keys
 from selenium.webdriver.common.action_chains import ActionChains
+from selenium.common import exceptions as SE
 import time
+from datetime import date
+from misclib import filename
 
 url = 'https://www.jobserve.com'
 
@@ -31,33 +34,47 @@ driver.find_element_by_id('txtKey').send_keys("jira")
 
 # Search
 driver.find_element_by_css_selector('.searchbcontain').click()
+#time.sleep(5)
 
-
+WebDriverWait(driver, 20).until(lambda driver: driver.find_element_by_class_name('job-counter').text.strip() != '')
 job_counter = driver.find_element_by_class_name('job-counter').text
 jobs = driver.find_elements_by_class_name('jobItem')
 start = 0
 end = len(jobs)
 
+file = filename('jira', 'txt')
 
-
-with open("structure.txt", "w") as structure:
+with open(file, "w") as f:
     while job_counter:
-        job_counter = driver.find_element_by_class_name('job-counter').text
+        job_counter = driver.find_element_by_class_name('job-counter').text   #needs to be here otherwise the last batch will be ommited
         for job in jobs[start:end]:
-            driver.execute_script("arguments[0].scrollIntoView(true);", job)
-            job.click()
-            id = job.get_property('id')
-            WebDriverWait(driver, 20).until(EC.element_to_be_clickable((By.ID, id)))
-            job_title = job.find_element_by_class_name('jobResultsTitle').text
-            xp = f"//*[@title='{job_title}']"
-            WebDriverWait(driver, 20).until(EC.presence_of_element_located((By.XPATH, xp)))
-            innerHTML = driver.find_element_by_id('JobDetailPanel').get_property('innerHTML')
-            structure.write("\nAdded job " + str(jobs.index(job)) + innerHTML)
-            ActionChains(driver).send_keys_to_element(job, Keys.ARROW_DOWN)
-            time.sleep(1)
+                WebDriverWait(driver, 20).until(EC.invisibility_of_element((By.ID, 'EmailAlertPrompt')))
+                driver.execute_script("arguments[0].scrollIntoView(true);", job)
+                job.click()
+                time.sleep(1)
+                # id = job.get_property('id')
+                # WebDriverWait(driver, 20).until(EC.element_to_be_clickable((By.ID, id)))
+                # except TimeoutError as err:
+                # print("\nCould not find element by ID.")
+                # print(err) jobdisplaypanel
+                try:
+                   # job_title = job.find_element_by_class_name('jobResultsTitle').get_property('innerHTML')
+                    WebDriverWait(driver, 20).until(EC.presence_of_element_located((By.ID, 'JobDetailPanel')))
+                    innerHTML = driver.find_element_by_id('JobDetailPanel').get_property('innerHTML')
+                    f.write("\nAdded job " + str(jobs.index(job)) + innerHTML)
+                except SE.TimeoutException as err:
+                   print(f"\nCould not find element job_title by xpath.")
+                   print(err)
+
+
+                #ActionChains(driver).send_keys_to_element(job, Keys.ARROW_DOWN)
+
+
         jobs = driver.find_elements_by_class_name('jobItem')
         start = end
         end = len(jobs)
 
-print("You made it!")
 
+
+print("Job counter: ", job_counter)
+print("You made it!")
