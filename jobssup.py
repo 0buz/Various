@@ -5,33 +5,48 @@ from misclib import filename
 # html.unescape('Suzy &amp; John')
 
 
-with open("structure.txt", "r") as f:
+with open("jira20190926.txt", "r") as f:
     html = f.read()
 
 soup = BeautifulSoup(html, 'lxml')
-# driver.close()
 
-selector = '.md_skills'
-job_titles = soup.select(selector)
+#html_ids = ['td_jobpositionlink', 'md_skills', 'td_job_type','md_location','md_start_date','md_rate','md_recruiter','md_posted_date']
+html_ids = ['td_jobpositionlink', 'md_skills', 'td_job_type','md_location','md_recruiter','md_posted_date']
 
-for j in job_titles:
-    print(j.get_text())
-
-selector = 'md_recruiter'
-agencies = soup.find_all(id=f"{selector}")
-
-for agency in agencies:
-    print(agency.get_text())
+jobs=[]
+# syntax: {_____:_____ for __ in ____}
+# ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+# ^^^^^ REMEMBER SYNTAX   ^^^^^^^^^^^^^^^^^^^^
 
 
-# job_titles = soup.find_all(class_='jobResultsTitle', limit=10)
-# for j in job_titles:
-#     print(j.text)
+for html_id in html_ids:
+    items = soup.find_all(id=f"{html_id}")
+    lst=[]
+    for item in items:
+        lst.append(item.get_text())
+    print(html_id,len(lst))
+    jobs.insert(html_ids.index(html_id),lst)
 
-# print(job_titles)
+
+for job in jobs:
+    print(list(zip(job)))
+
+print(len(jobs))
 
 
-file = filename('raw', 'txt')
 
-with open(file,"w") as f:
+print(zip(jobs))
+
+tp = zip(jobs)
+
+for item in list(tp):
+    print("\n",item)
+
+for job in jobs:
+
+
+d = {k : v for k in html_ids}
+file = filename('raw', 'csv')
+
+
 
