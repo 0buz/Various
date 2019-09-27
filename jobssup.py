@@ -1,17 +1,18 @@
 from bs4 import BeautifulSoup
-import lxml
-from misclib import filename
-# import html
-# html.unescape('Suzy &amp; John')
+from lxml import html
+from csv import reader, writer, DictReader, DictWriter
+from misclib import filename, remove_white_space
 
 
-with open("jira20190926.txt", "r") as f:
+remove_white_space("jira20190926x.txt")
+
+with open("jira20190926x.txt", "r") as f:
     html = f.read()
 
-soup = BeautifulSoup(html, 'lxml')
+soup = BeautifulSoup(html, 'html.parser')
 
-#html_ids = ['td_jobpositionlink', 'md_skills', 'td_job_type','md_location','md_start_date','md_rate','md_recruiter','md_posted_date']
-html_ids = ['td_jobpositionlink', 'md_skills', 'td_job_type','md_location','md_recruiter','md_posted_date']
+html_ids = ['td_jobpositionlink', 'md_skills', 'td_job_type','location','duration','startdate','rate','md_recruiter','md_posted_date']
+#html_ids = ['td_jobpositionlink', 'md_skills', 'td_job_type','md_location','md_recruiter','md_posted_date']
 
 jobs=[]
 # syntax: {_____:_____ for __ in ____}
@@ -24,29 +25,25 @@ for html_id in html_ids:
     lst=[]
     for item in items:
         lst.append(item.get_text())
-    print(html_id,len(lst))
+    print(html_id,len(lst), lst)
     jobs.insert(html_ids.index(html_id),lst)
 
+rows = list(zip(*jobs))
 
-for job in jobs:
-    print(list(zip(job)))
-
-print(len(jobs))
-
-
-
-print(zip(jobs))
-
-tp = zip(jobs)
-
-for item in list(tp):
+for item in rows:
     print("\n",item)
 
-for job in jobs:
+
+file = filename('preprocessed','csv')
+
+with open(file, "w") as f:
+    csv_writer = writer(f)
+    csv_writer.writerow(html_ids)  # write header
+    for row in rows:
+        csv_writer.writerow(row)
 
 
-d = {k : v for k in html_ids}
-file = filename('raw', 'csv')
+work on removing Duration, Rate etc!!!!!
 
 
 

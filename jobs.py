@@ -30,7 +30,7 @@ if not checked:
     driver.find_element_by_id('ddcl-selInd-i14').click()
 
 # Keyword
-driver.find_element_by_id('txtKey').send_keys("jira")
+#driver.find_element_by_id('txtKey').send_keys("jira")
 
 # Search
 driver.find_element_by_css_selector('.searchbcontain').click()
@@ -42,12 +42,13 @@ jobs = driver.find_elements_by_class_name('jobItem')
 start = 0
 end = len(jobs)
 
-file = filename('jira', 'txt')
+file = filename('raw', 'txt')
 
 with open(file, "w") as f:
     while job_counter:
         job_counter = driver.find_element_by_class_name('job-counter').text   #needs to be here otherwise the last batch will be ommited
         for job in jobs[start:end]:
+            if job.find_element_by_class_name('jobResultsTitle').text != "Transformation Director - Digital & Strategy - E-commerce":
                 WebDriverWait(driver, 20).until(EC.invisibility_of_element((By.ID, 'EmailAlertPrompt')))
                 driver.execute_script("arguments[0].scrollIntoView(true);", job)
                 job.click()
@@ -61,13 +62,13 @@ with open(file, "w") as f:
                    # job_title = job.find_element_by_class_name('jobResultsTitle').get_property('innerHTML')
                     WebDriverWait(driver, 20).until(EC.presence_of_element_located((By.ID, 'JobDetailPanel')))
                     innerHTML = driver.find_element_by_id('JobDetailPanel').get_property('innerHTML')
-                    f.write("\nAdded job " + str(jobs.index(job)) + innerHTML)
+                    f.write("Added job " + str(jobs.index(job)) + innerHTML)
                 except SE.TimeoutException as err:
                    print(f"\nCould not find element job_title by xpath.")
                    print(err)
 
 
-                #ActionChains(driver).send_keys_to_element(job, Keys.ARROW_DOWN)
+                ActionChains(driver).send_keys_to_element(job, Keys.ARROW_DOWN)
 
 
         jobs = driver.find_elements_by_class_name('jobItem')
@@ -78,3 +79,4 @@ with open(file, "w") as f:
 
 print("Job counter: ", job_counter)
 print("You made it!")
+driver.close()
