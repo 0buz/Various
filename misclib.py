@@ -17,7 +17,6 @@ def remove_white_space(file):
         f.truncate()  # remove and extra text left from the pre-edited version
 
 
-remove_white_space('jira20190926prea.txt')
 
 
 

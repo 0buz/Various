@@ -2,7 +2,7 @@ from bs4 import BeautifulSoup
 from lxml import html
 from csv import reader, writer, DictReader, DictWriter
 from misclib import filename, remove_white_space
-
+import re
 
 remove_white_space("jira20190926x.txt")
 
@@ -23,8 +23,11 @@ jobs=[]
 for html_id in html_ids:
     items = soup.find_all(id=f"{html_id}")
     lst=[]
+    regexp = f"{html_id.capitalize()[:4]}"
     for item in items:
-        lst.append(item.get_text())
+        data = item.get_text()
+        data = re.sub(regexp, '', data)
+        lst.append(data)
     print(html_id,len(lst), lst)
     jobs.insert(html_ids.index(html_id),lst)
 

@@ -48,7 +48,6 @@ with open(file, "w") as f:
     while job_counter:
         job_counter = driver.find_element_by_class_name('job-counter').text   #needs to be here otherwise the last batch will be ommited
         for job in jobs[start:end]:
-            if job.find_element_by_class_name('jobResultsTitle').text != "Transformation Director - Digital & Strategy - E-commerce":
                 WebDriverWait(driver, 20).until(EC.invisibility_of_element((By.ID, 'EmailAlertPrompt')))
                 driver.execute_script("arguments[0].scrollIntoView(true);", job)
                 job.click()
@@ -66,8 +65,6 @@ with open(file, "w") as f:
                 except SE.TimeoutException as err:
                    print(f"\nCould not find element job_title by xpath.")
                    print(err)
-
-
                 ActionChains(driver).send_keys_to_element(job, Keys.ARROW_DOWN)
 
 
