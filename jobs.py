@@ -6,7 +6,6 @@ from selenium.webdriver.common.keys import Keys
 from selenium.webdriver.common.action_chains import ActionChains
 from selenium.common import exceptions as SE
 import time
-from datetime import date
 from misclib import filename
 
 url = 'https://www.jobserve.com'
@@ -38,11 +37,38 @@ driver.find_element_by_css_selector('.searchbcontain').click()
 
 WebDriverWait(driver, 20).until(lambda driver: driver.find_element_by_class_name('job-counter').text.strip() != '')
 job_counter = driver.find_element_by_class_name('job-counter').text
+
 jobs = driver.find_elements_by_class_name('jobItem')
+jids=[job.get_property('id') for job in jobs]
+
+jids_diff = jids
+
+print(jids)
 start = 0
 end = len(jobs)
 
 file = filename('raw', 'txt')
+count = 0
+
+# with open(file, "w") as f:
+#     while job_counter:
+#         job_counter = driver.find_element_by_class_name('job-counter').text   #needs to be here otherwise the last batch will be ommited
+#         for jid in jids_diff:
+#                 job = driver.find_element_by_id(jid)
+#                 WebDriverWait(driver, 20).until(EC.invisibility_of_element((By.ID, 'EmailAlertPrompt')))
+#                 driver.execute_script("arguments[0].scrollIntoView(true);", job)
+#                 job.click()
+#                 time.sleep(0.5)
+#                 WebDriverWait(driver, 20).until(EC.presence_of_element_located((By.ID, 'JobDetailPanel')))
+#                 innerHTML = driver.find_element_by_id('JobDetailPanel').get_property('innerHTML')
+#                 #print("Added job " + str(count) + job.text[:30])
+#                 f.write("Added job " + str(count) + innerHTML)
+#                 count += 1
+#                 ActionChains(driver).send_keys_to_element(job, Keys.ARROW_DOWN)
+#         jobs = driver.find_elements_by_class_name('jobItem')
+#         jids = [job.get_property('id') for job in jobs]
+#         jids_diff = [jid for jid in jids if jid not in set(jids_diff)]
+#
 
 with open(file, "w") as f:
     while job_counter:
@@ -65,12 +91,14 @@ with open(file, "w") as f:
                 except SE.TimeoutException as err:
                    print(f"\nCould not find element job_title by xpath.")
                    print(err)
-                ActionChains(driver).send_keys_to_element(job, Keys.ARROW_DOWN)
+                #ActionChains(driver).send_keys_to_element(job, Keys.ARROW_DOWN)
 
 
         jobs = driver.find_elements_by_class_name('jobItem')
         start = end
         end = len(jobs)
+
+
 
 
 
