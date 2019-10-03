@@ -4,9 +4,9 @@ from csv import reader, writer, DictReader, DictWriter
 from misclib import filename, remove_white_space
 import re
 
-remove_white_space("jira20190926x.txt")
+remove_white_space("raw20191003_test.txt")
 
-with open("jira20190926x.txt", "r") as f:
+with open("raw20191003_test.txt", "r") as f:
     html = f.read()
 
 soup = BeautifulSoup(html, 'html.parser')

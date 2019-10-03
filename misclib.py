@@ -1,6 +1,8 @@
 from datetime import date
 import re
 from selenium import webdriver
+from selenium.webdriver.support.ui import WebDriverWait
+from selenium.webdriver.support import expected_conditions as EC
 from selenium.common import exceptions as SE
 import time
 
@@ -20,22 +22,6 @@ def remove_white_space(file):
         f.truncate()  # remove and extra text left from the pre-edited version
 
 
-#
-# public boolean retryingFindClick(elem) {
-#     boolean result = false;
-#     int attempts = 0;
-#     while(attempts < 2) {
-#         try {
-#             driver.findElement(by).click();
-#             result = true;
-#             break;
-#         } catch(StaleElementException e) {
-#         }
-#         attempts++;
-#     }
-#     return result;
-# }
-
 def try_click(elem,str):
     result = False
     attempts = 0
@@ -49,3 +35,19 @@ def try_click(elem,str):
             print(f"For element {elem} {str}:", err)
         attempts += 1
     return result
+
+
+
+from selenium.webdriver.support import expected_conditions as EC
+
+class WaitForAttrValueChange(object):
+    def __init__(self, locator, val_):
+        self.locator = locator
+        self.val = val_
+
+    def __call__(self, driver):
+        try:
+            attr_value = EC._find_element(driver, self.locator).get_property('value')
+            return attr_value.startswith(self.val)
+        except SE.StaleElementReferenceException:
+            return False
