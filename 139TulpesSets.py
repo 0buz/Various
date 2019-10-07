@@ -55,3 +55,5 @@ print("\n",set_comprehension)
 string="mellons"
 
 print("Vowel count in string is: ",len({char for char in string if char in "aeiou"}))
+
+

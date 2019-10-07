@@ -19,7 +19,8 @@ html_ids = {
     'Duration':'duration',
     'Start Date':'startdate',
     'Rate':'rate',
-    'Recruitment Agency':'md_recruiter','Posted Date':'md_posted_date'
+    'Recruitment Agency':'md_recruiter',
+    'Posted Date':'md_posted_date'
 }
 # syntax: {_____:_____ for __ in ____}
 # ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
