@@ -11,6 +11,7 @@ print(full_name)
 print(artist.keys())
 print(artist.values())
 print("\n.items() returns tuples: ", artist.items())
+print(artist["first"])
 
 
 for k, v in artist.items():
