@@ -11,7 +11,7 @@ def sum_all_nums_args(*args):
     return total
 
 print(sum_all_nums_args(2,5,6,7,8,8,9,4))  #use with any number of arguments
-
+print(sum_all_nums_args())
 
 # **kwargs  >>> Key Word Args
 # stored as dictionary
