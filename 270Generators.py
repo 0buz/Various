@@ -72,6 +72,6 @@ list_start_time = time.time()
 print(sum([n for n in range(100000000)]))
 list_time = time.time() - list_start_time
 
-print(f"sum(n for n in range(10000000)) took: {gen_time}")
-print(f"sum([n for n in range(10000000)]) took: {list_time}")
+print(f"sum(n for n in range(10000000)) with generators took: {gen_time}")
+print(f"sum([n for n in range(10000000)]) with list comprehension took: {list_time}")
 #==================================================================================================
