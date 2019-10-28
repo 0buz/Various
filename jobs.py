@@ -1,13 +1,13 @@
-import requests
-from bs4 import BeautifulSoup
-import lxml
 from selenium import webdriver
 from selenium.webdriver.support.ui import WebDriverWait, Select
 from selenium.webdriver.common.by import By
 from selenium.webdriver.support import expected_conditions as EC
 from selenium.webdriver.common.keys import Keys
 from selenium.webdriver.common.action_chains import ActionChains
+from selenium.common import exceptions as SE
 import time
+from misclib import filename, try_click, WaitForAttrValueChange
+
 
 url = 'https://www.jobserve.com'
 
@@ -17,6 +17,9 @@ driver.get(url)
 driver.find_element_by_id('selAge').click()
 select = Select(driver.find_element_by_id('selAge'))
 select.select_by_index(7)
+
+# Location
+driver.find_element_by_id('txtLoc').clear()
 
 # Industry
 driver.find_element_by_class_name('ui-dropdownchecklist-text').click()
@@ -29,132 +32,96 @@ checked = driver.find_element_by_id('ddcl-selInd-i14').get_property('checked')
 if not checked:
     driver.find_element_by_id('ddcl-selInd-i14').click()
 
+
+
 # Keyword
-driver.find_element_by_id('txtKey').send_keys("test")
+# driver.find_element_by_id('txtKey').send_keys("jira")
 
 # Search
 driver.find_element_by_css_selector('.searchbcontain').click()
+# time.sleep(5)
 
-# print(driver.find_element_by_id('td_jobpositionlink').get_attribute('title'))
-# driver.refresh()
+WebDriverWait(driver, 20).until(lambda driver: driver.find_element_by_class_name('job-counter').text.strip() != '')
+job_counter = driver.find_element_by_class_name('job-counter').text
 
+print(job_counter)  # to be logged
 
-#
-# ActionChains(driver).move_to_element(driver.find_element_by_css_selector('.nextJobs')).perform()
-#
-# jobs = driver.find_elements_by_class_name('jobItem')
-# jobs[len(jobs) - 1].click()
-
-end_of_results = "Loading"
-jobs = driver.find_elements_by_class_name('jobItem')
-# while True:
-#     if end_of_results == "Loading":
-#         ActionChains(driver).move_to_element(driver.find_element_by_css_selector('.nextJobs')).perform()
-#        # ActionChains(driver).send_keys_to_element(driver.)
-#         WebDriverWait(driver, 3)
-#         end_of_results = driver.find_element_by_class_name("nextJobs").text
-#         jobs = driver.find_elements_by_class_name('jobItem')
-#         #WebDriverWait(driver, 3).until(EC.element_to_be_clickable((By., 'someid')))
-#         time.sleep(3)
-#         jobs[len(jobs) - 3].click()
-#     else:
-#         break
-
-print(len(jobs))
-
-while True:
-    if end_of_results != "End of Results":
-        element = jobs[len(jobs) - 3]
-        id = element.get_property('id')
-        ActionChains(driver).move_to_element(element).perform()
-        WebDriverWait(driver, 20).until(EC.element_to_be_clickable((By.ID, id)))
-        element.click()
-       # ActionChains(driver).send_keys_to_element(driver.)
-        #jobs[len(jobs) - 3].click()
-        #jobs[len(jobs) - 3].send_keys(Keys.ARROW_DOWN)
-        time.sleep(3)
-        WebDriverWait(driver, 3)
-        end_of_results = driver.find_element_by_class_name("nextJobs").text
-        jobs = driver.find_elements_by_class_name('jobItem')
-        #WebDriverWait(driver, 3).until(EC.element_to_be_clickable((By., 'someid')))
-    else:
-        break
-
+file = filename('raw', 'txt')
 count = 0
-for job in jobs:
-    job.click()
-    job_title = job.find_element_by_class_name('jobResultsTitle').text
-    xp = f"//*a[@title='{job_title}']"
-    WebDriverWait(driver, 20).until(EC.presence_of_element_located((By.XPATH, xp)))
-    innerHTML = driver.find_element_by_id('JobDetailPanel').get_property('innerHTML')
-    job.send_keys(Keys.ARROW_DOWN)
-    count = +1
+whilecount = 0
+jids_old = []
 
-with open("structure.txt", "w") as structure:
-    for job in jobs:
-        job.click()
-        job_title = job.find_element_by_class_name('jobResultsTitle').text
-        xp = f"//*[@title='{job_title}']"
-        WebDriverWait(driver, 20).until(EC.presence_of_element_located((By.XPATH, xp)))
-        innerHTML = driver.find_element_by_id('JobDetailPanel').get_property('innerHTML')
-        structure.write("\nAdded job " + str(jobs.index(job)) + innerHTML)
+with open(file, "w") as f:
+    while job_counter:
+        jobs = driver.find_elements_by_class_name('jobItem')
+        jids_new = [job.get_property('id') for job in jobs]
+        jids_diff = [jid for jid in jids_new if jid not in set(jids_old)]   # jids_new - jids_old
+        job_counter = driver.find_element_by_class_name('job-counter').text  # needs to be here otherwise the last batch will be ommited
+        whilecount+=1
+        for jid in jids_diff:
+            job = driver.find_element_by_id(jid)
+            WebDriverWait(driver, 20).until(EC.invisibility_of_element((By.ID, 'EmailAlertPrompt')))
+            driver.execute_script("arguments[0].scrollIntoView(true);", job)
 
+            try:
+                WebDriverWait(driver, 20).until(EC.presence_of_element_located((By.ID, jid)))
+                try_click(job,"job")
+                time.sleep(0.5)
+            except SE.TimeoutException as err:
+                print(f"Timeout on job no. {count} >>> {job.text[:30]} >>> try click action.")
+                print(err)
+
+            try:
+                WebDriverWait(driver, 20).until(WaitForAttrValueChange((By.ID, 'jidval'), jid))
+                #WebDriverWait(driver, 20).until(EC.presence_of_element_located((By.ID, 'jidval')))     #wait for this element to load
+                loadedID = driver.find_element_by_id('jidval').get_property('value')
+               # WebDriverWait(driver, 20).until(lambda driver: jid == loadedID)      # ensure the right job details loaded by checking the job ids
+            except SE.TimeoutException as err:
+                   print(f"\nTimeout on job no. {count} >>> {job.text[:30]} >>> jid {jid} vs loadedID {loadedID}.")
+                   print(err)
+
+            innerHTML = driver.find_element_by_id('JobDetailPanel').get_property('innerHTML')
+            f.write("Added job " + str(count) + innerHTML)
+            count += 1
+            #ActionChains(driver).send_keys_to_element(job, Keys.ARROW_DOWN)
+        jids_old = jids_new
+
+
+
+
+# jobs = driver.find_elements_by_class_name('jobItem')
+# start = 0
+# end = len(jobs)
 #
-# index = 0
-# #with open("structure.txt", "a") as structure:
-# while not end_of_results:
-#          job = driver.find_element_by_class_name('jobItem')
-#          job.click()
-#          job_title = job.find_element_by_class_name('jobResultsTitle').text
-#          xp = f"//*[@title='{job_title}']"
-#          WebDriverWait(driver, 20).until(EC.presence_of_element_located((By.XPATH, xp)))
-#          innerHTML = driver.find_element_by_id('JobDetailPanel').get_property('innerHTML')
-#          job.send_keys(Keys.ARROW_DOWN)
-#          index += 1
-#          #structure.write("\nAdded job " + str(index) + innerHTML)
-
-
-#:
-
-
-scroller.send_keys(Keys, )
-
-# soup = BeautifulSoup(scroll_content, 'html.parser')
+# with open(file, "w") as f:
+#     while job_counter:
+#         job_counter = driver.find_element_by_class_name('job-counter').text   #needs to be here otherwise the last batch will be ommited
+#         for job in jobs[start:end]:
+#                 WebDriverWait(driver, 20).until(EC.invisibility_of_element((By.ID, 'EmailAlertPrompt')))
+#                 driver.execute_script("arguments[0].scrollIntoView(true);", job)
+#                 job.click()
+#                 time.sleep(1)
+#                 # id = job.get_property('id')
+#                 # WebDriverWait(driver, 20).until(EC.element_to_be_clickable((By.ID, id)))
+#                 # except TimeoutError as err:
+#                 # print("\nCould not find element by ID.")
+#                 # print(err) jobdisplaypanel
+#                # try:
+#                    # job_title = job.find_element_by_class_name('jobResultsTitle').get_property('innerHTML')
+#                 WebDriverWait(driver, 20).until(EC.presence_of_element_located((By.ID, 'JobDetailPanel')))
+#                 innerHTML = driver.find_element_by_id('JobDetailPanel').get_property('innerHTML')
+#                 f.write("Added job " + str(jobs.index(job)) + innerHTML)
+#                 #except SE.TimeoutException as err:
+#                    # print(f"\nCould not find element job_title by xpath.")
+#                    # print(err)
+#                 #ActionChains(driver).send_keys_to_element(job, Keys.ARROW_DOWN)
 #
-# job_items = soup.find_all(class_='jobItem')
-# next_set = soup.find_all_next(class_='jobItem')
 #
-# for job in job_items:
-#     print('\nThis is the job title ' + str(job_items.index(job)) + ":\n", job.get_text())
-#     driver
+#         jobs = driver.find_elements_by_class_name('jobItem')
+#         start = end
+#         end = len(jobs)
 
-
-# title = WebDriverWait(driver, 5).until(EC.presence_of_element_located((By.ID,'td_jobpositionlink')))
-
-
-html = driver.page_source
-# print(html)
-
-# description = driver.find_element_by_id('JobDetailContainer').text
-
-
-soup = BeautifulSoup(html, 'html.parser')
-# driver.close()
-
-selector = '.jobItem'
-job_titles = soup.select(selector)
-
-for j in job_titles:
-    print(j.get_text())
-
-selector = '.md_skills'
-job_descriptions = soup.select(selector)
-
-for d in job_descriptions:
-    print(d.get_text())
-
-# job_titles = soup.find_all(class_='jobResultsTitle', limit=10)
-# for j in job_titles:
-#     print(j.text)
-
-# print(job_titles)
+print("Whilecount is ",whilecount)
+print("Job counter: ", job_counter)
+print("You made it!")
+#driver.close()
