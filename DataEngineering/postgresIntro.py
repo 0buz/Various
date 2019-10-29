@@ -76,16 +76,27 @@ USING score_phrase::evaluation_enum;
 #=====================================================================================================================
 
 
-# =============  INSERT example  ====================================================================================
+# =============  INSERT examples  ====================================================================================
+
+# == 1 Insert with tuple ======
 cur.execute("INSERT INTO users VALUES (%s, %s, %s, %s);", (1, "hello@dataquest.io", "John", "123, Fake Street"))
 
 cur.execute("INSERT INTO foo VALUES (%s)", "bar")    # WRONG
 cur.execute("INSERT INTO foo VALUES (%s)", ("bar"))  # WRONG
 cur.execute("INSERT INTO foo VALUES (%s)", ("bar",)) # correct
 cur.execute("INSERT INTO foo VALUES (%s)", ["bar"])  # correct
-
-
 # translates to INSERT directly into dbe.g. insert into reviews(id, name, email, rating)  values (1, 'Ady', 'ady@email.com', 'Great');
+
+
+# == 2 Insert with dictionary =====
+row_values = {
+    'identifier': 1,
+    'mail': 'adam.smith@dataquest.io',
+    'name': 'Adam Smith',
+    'address': '42 Fake Street'
+}
+
+cur.execute("INSERT into users VALUES (%(identifier)s, %(mail)s, %(name)s, %(address)s);", row_values)
 #=====================================================================================================================
 
 

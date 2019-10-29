@@ -17,3 +17,24 @@ for score_phrase in unique_words_in_score_phrase:
 
 print(max(lens))
 #======================================================================================================================
+
+
+
+from enum import Enum, IntEnum
+
+class TypeEnum(IntEnum):
+    Any = 1
+    Permanent = 2
+    Contract = 3
+    ContractPermanent = 4
+    PartTimeTemporarySeasonal = 5
+
+print(TypeEnum.Any.value)
+
+
+class TypeEnum(IntEnum):
+    "Any" = 1
+    "Permanent" = 2
+    "Contract" = 3
+    "Contract/Permanent" = 4
+    "Part Time/Temporary/Seasonal" = 5
