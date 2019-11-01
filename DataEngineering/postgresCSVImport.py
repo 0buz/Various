@@ -8,3 +8,8 @@ with open("user_accounts.csv", "r") as f:
     reader = csv.reader(f)
     for row in reader:
         cur.execute("insert into users values (%s,%s,%s,%s);", row)
+
+
+
+
+cursor.execute("INSERT INTO sms_log (%s,%s,%s,%s) VALUES (" + str(row[0]) + ',' + str(row[1]) + ',' + str(row[2]) + ', Success'")")

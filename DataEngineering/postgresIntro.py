@@ -99,7 +99,63 @@ row_values = {
 cur.execute("INSERT into users VALUES (%(identifier)s, %(mail)s, %(name)s, %(address)s);", row_values)
 #=====================================================================================================================
 
-
 conn.close()
+
+
+rows=[("aaa","bcccccccbb","Great"),("CCC","DvvvvvDD","Great")]
+
+for row in rows:
+    cur.execute("INSERT INTO reviews VALUES (%s, %s, %s);", row)
+
+conn.commit()
+
+query="select * from reviews"
+cur.execute(query)
+all_results = cur.fetchall()
+
+cur.execute("INSERT INTO users VALUES (%s, %s, %s, %s);", (1, "hello@dataquest.io", "John", "123, Fake Street"))
+cur.execute("INSERT INTO sms_log VALUES (%s,%s,%s,%s);", (row[0],row[1],row[2],"Success"))
+
+
+
+def get_email(name):
+    import psycopg2
+    conn = psycopg2.connect("dbname=test user=pgrole host=localhost password=rpython")
+    cur = conn.cursor()
+    query_string = "SELECT email FROM reviews WHERE name = '" + name + "';"
+    # execute the query
+    cur.execute(query_string)
+    res = cur.fetchall()
+    conn.close()
+    return res
+
+aaa=get_email("Ady")
+
+import psycopg2
+
+conn = psycopg2.connect("dbname=test user=pgrole host=localhost password=rpython")
+cur = conn.cursor()
+
+def insert_row(*args):
+    conn = psycopg2.connect("dbname=test user=pgrole host=localhost password=rpython")
+    cur = conn.cursor()
+    cur.execute("INSERT INTO reviews VALUES (%s,%s,%s);", tuple(args))
+    conn.commit()
+    conn.close()
+
+
+insert_row("xaaaa","fff","Great")
+conn.close()
+
+cur.execute("select * from reviews;")
+table_description = cur.description
+for item in table_description:
+    print(item)
+
+
+
+
+
+
 
 

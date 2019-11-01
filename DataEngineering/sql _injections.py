@@ -1,5 +1,9 @@
 import timeit
 
+import datetime
+
+xx=datetime.datetime.now()
+
 def get_email(name):
     import psycopg2
     conn = psycopg2.connect("dbname=dq user=dq")
