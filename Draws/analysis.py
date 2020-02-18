@@ -30,63 +30,52 @@ data=df[['Star1','Star2']].to_numpy()
 # data=df.iloc[:,6:].values.tolist()
 
 stars=np.concatenate(data)
+
 unique, counts = np.unique(stars, return_counts=True)
 print("Numbers:", unique)
 print("Counts:", counts)
 
+#
+#
+# x = np.arange(1,len(unique)+1) # the label locations; needs to start at 1, not 0
+# print(x)
+# bars=plt.bar(x, counts, width=0.5)
+#
+# plt.xticks(unique)
+# #plt.yticks(counts)
+# plt.title('Most drawn stars')
+# plt.xlabel('Number')
+# plt.ylabel('Count')
+#
+# def autolabel():
+#     """Attach a text label above each bar, displaying its height."""
+#     for bar in bars:
+#         height = bar.get_height()
+#         plt.annotate('{}'.format(height),
+#                     xy=(bar.get_x() + bar.get_width() / 2, height),
+#                     xytext=(0, 1),  # 1 points vertical offset
+#                     textcoords="offset points",
+#                     ha='center', va='bottom')
+#
+# autolabel()
+#
+# #plt.hist(counts, unique)
+#
+# plt.show()
 
-
-
-
-
-
-x = np.arange(1,len(unique)+1) # the label locations; needs to start at 1, not 0
-print(x)
-bars=plt.bar(x, counts, width=0.5)
-
-plt.xticks(unique)
-#plt.yticks(counts)
+# ========================= Stem plot =============================================================
+stems = plt.stem(unique, counts, use_line_collection=True)
+plt.xticks(unique, unique)
 plt.title('Most drawn stars')
 plt.xlabel('Number')
 plt.ylabel('Count')
+for x,y in zip(unique, counts):
+    plt.annotate('{:.0f}'.format(y), xy=(x,y), xytext=(0,5), textcoords='offset points',ha='center')
 
-def autolabel():
-    """Attach a text label above each bar in *rects*, displaying its height."""
-    for bar in bars:
-        height = bar.get_height()
-        plt.annotate('{}'.format(height),
-                    xy=(bar.get_x() + bar.get_width() / 2, height),
-                    xytext=(0, 1),  # 1 points vertical offset
-                    textcoords="offset points",
-                    ha='center', va='bottom')
-
-autolabel()
-
-#plt.hist(counts, unique)
+plt.xticks(unique)   #ticks on x-axis are the individual 'unique' numbers
+#plt.stem(unique, counts, use_line_collection=True)
 
 plt.show()
-
-# ========================= Stem plot =============================================================
-# x = np.arange(1, len(unique) + 1)  # the label locations; needs to start at 1, not 0
-# print(x)
-# stems = plt.stem(x, counts)
-#
-#
-# def autolabel():
-#     """Attach a text label above each bar in *rects*, displaying its height."""
-#     for stem in stems:
-#         plt.annotate('{}'.format(counts),
-#                      xy=(stem, counts[x-1]),
-#                      xytext=(0, 1),  # 1 points vertical offset
-#                      textcoords="offset points",
-#                      ha='center', va='bottom')
-#
-#
-# plt.xticks(unique)   #ticks on x-axis are the individual 'unique' numbers
-# #plt.stem(unique, counts, use_line_collection=True)
-#
-# autolabel()
-# plt.show()
 #==================================================================================================
 
 
