@@ -6,7 +6,6 @@ import matplotlib.pyplot as plt
 # interactive(True)
 import re
 from dateutil import parser
-import datetime
 import os
 os.chdir('/home/adrian/Python/ModernPython3Bootcamp/Various/')
 
