@@ -35,32 +35,33 @@ print("Numbers:", unique)
 print("Counts:", counts)
 
 #
-#
-# x = np.arange(1,len(unique)+1) # the label locations; needs to start at 1, not 0
-# print(x)
-# bars=plt.bar(x, counts, width=0.5)
-#
-# plt.xticks(unique)
-# #plt.yticks(counts)
-# plt.title('Most drawn stars')
-# plt.xlabel('Number')
-# plt.ylabel('Count')
-#
-# def autolabel():
-#     """Attach a text label above each bar, displaying its height."""
-#     for bar in bars:
-#         height = bar.get_height()
-#         plt.annotate('{}'.format(height),
-#                     xy=(bar.get_x() + bar.get_width() / 2, height),
-#                     xytext=(0, 1),  # 1 points vertical offset
-#                     textcoords="offset points",
-#                     ha='center', va='bottom')
-#
-# autolabel()
-#
-# #plt.hist(counts, unique)
-#
-# plt.show()
+# ========================= Bar plot =============================================================
+x = np.arange(1,len(unique)+1) # the label locations; needs to start at 1, not 0
+print(x)
+bars=plt.bar(x, counts, width=0.5)
+
+plt.xticks(unique)
+#plt.yticks(counts)
+plt.title('Most drawn stars')
+plt.xlabel('Number')
+plt.ylabel('Count')
+
+def autolabel():
+    """Attach a text label above each bar, displaying its height."""
+    for bar in bars:
+        height = bar.get_height()
+        plt.annotate('{}'.format(height),
+                    xy=(bar.get_x() + bar.get_width() / 2, height),
+                    xytext=(0, 1),  # 1 points vertical offset
+                    textcoords="offset points",
+                    ha='center', va='bottom')
+
+autolabel()
+
+#plt.hist(counts, unique)
+
+plt.show()
+#==================================================================================================
 
 # ========================= Stem plot =============================================================
 stems = plt.stem(unique, counts, use_line_collection=True)
