@@ -2,26 +2,11 @@ import pandas as pd
 import numpy as np
 import matplotlib
 import matplotlib.pyplot as plt
-# from matplotlib import interactive
-# interactive(True)
-import re
-from dateutil import parser
-import os
-os.chdir('/home/adrian/Python/ModernPython3Bootcamp/Various/')
+import settings
 
 
-dtypes = {
-    # 'Date':'datetime64[ns]',
-    '1': 'int8',
-    '2': 'int8',
-    '3': 'int8',
-    '4': 'int8',
-    '5': 'int8',
-    'Star1': 'int8',
-    'Star2': 'int8',
-}
 
-df = pd.read_csv('Draws/PastDraws.csv', dtype=dtypes, parse_dates=['Date'])
+df = pd.read_csv('PastDraws.csv', dtype=settings.DTYPES, parse_dates=['Date'])
 
 
 data=df[['Star1','Star2']].to_numpy()

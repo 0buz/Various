@@ -2,18 +2,27 @@ import pandas as pd
 import re
 from dateutil import parser
 import os
-os.chdir('/home/adrian/Python/ModernPython3Bootcamp/Various/')
+import settings
 
-from . import settings
-
-os.chdir(settings.WORKING_DIR)
-print(os.getcwd())
+# os.chdir(settings.WORKING_DIR)
+# print(os.getcwd())
 
 
-year='2018'
 url = f'{settings.URL}'
 
-print(url)
+
+def mystring(year=100):
+    b_string=settings.URL.format(year=year)
+    return b_string
+
+s=mystring(855)
+
+print(f'{mystring(588)}')
+
+var = 42
+user_input = "The answer is {variable}"
+# in order to get The answer is 42, we can follow this method
+print (user_input.format(variable=var))
 
 def optimise_dtypes(dataframe):
     dates = dataframe['Date']
@@ -39,31 +48,32 @@ def all_draws():
     df.sort_values(by='Date', ascending=False, inplace=True)
     print(df.info())
     print(df.memory_usage(deep=True))
-    return df.to_csv('Draws/PastDraws.csv', index=False, header=True)
+    return df.to_csv('PastDraws.csv', index=False, header=True)
 
 
 def latest_draw():
     dtypes = settings.DTYPES
-    url = f'http://www.lottology.com/europe/euromillions/?do=past-draws-archive&tab=&year=2020&group_num_selector=selected&numbers_selector_mode=add&numbers_selected='
+    url = settings.URL
+    #url = f'http://www.lottology.com/europe/euromillions/?do=past-draws-archive&tab=&year=2020&group_num_selector=selected&numbers_selector_mode=add&numbers_selected='
     table = pd.read_html(url)[1]
     new_row = table.iloc[[0]] # get the latest draw results
     print(new_row)
     new_row = optimise_dtypes(new_row)
 
-    df = pd.read_csv('Draws/PastDraws.csv', dtype=dtypes, parse_dates=['Date'])
+    df = pd.read_csv('PastDraws.csv', dtype=dtypes, parse_dates=['Date'])
 
     if not new_row.equals(df.iloc[[0]]):
         df = df.append(new_row).reset_index(drop=True)
         df.sort_values(by='Date', ascending=False, inplace=True)
-        return df.to_csv('Draws/PastDraws.csv', index=False, header=True)
+        return df.to_csv('PastDraws.csv', index=False, header=True)
     else:
         return f"Already exists"
 
 
 def year_draw(year='2020'):
     dtypes = settings.DTYPES
-    url = f'http://www.lottology.com/europe/euromillions/?do=past-draws-archive&tab=&year={year}&group_num_selector=selected&numbers_selector_mode=add&numbers_selected='
-    #url=f'https://www.google.com/search?q={year}&oq=2020'
+    url = settings.URL
+    #url = f'http://www.lottology.com/europe/euromillions/?do=past-draws-archive&tab=&year={year}&group_num_selector=selected&numbers_selector_mode=add&numbers_selected='
     this_year = pd.read_html(url)[1]
 
     df = pd.read_csv('Draws/PastDraws.csv', dtype=dtypes, parse_dates=['Date'])
@@ -75,12 +85,12 @@ def year_draw(year='2020'):
     all_years = optimise_dtypes(all_years)
     all_years.sort_values(by='Date', ascending=False, inplace=True)
 
-    return all_years.to_csv('Draws/PastDraws.csv', index=False, header=True)
+    return all_years.to_csv('PastDraws.csv', index=False, header=True)
 
 
 if __name__ == '__main__':
 
-    if not os.path.isfile('Draws/PastDraws.csv'):
+    if not os.path.isfile('PastDraws.csv'):
         draws_csv = all_draws()
     else:
         draws_csv = year_draw()
