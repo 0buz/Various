@@ -12,7 +12,7 @@ print(moma.select_dtypes(
 
 print(moma[['posted_date', 'created_date']].memory_usage(deep=True).sum()/1048576)
 
-# ========  Calculate total memory usage for columns of type 'object'  =========================
+# ========  Calculate total memory usage for columns of type 'object'  ========================
 obj_cols = moma.select_dtypes(include=['object'])
 obj_cols_mem = obj_cols.memory_usage(deep=True)
 obj_cols_sum = obj_cols_mem.sum() / 1048576  # divide by 2^20 to get result in MB

@@ -2,26 +2,11 @@ import pandas as pd
 import numpy as np
 import matplotlib
 import matplotlib.pyplot as plt
-# from matplotlib import interactive
-# interactive(True)
-import re
-from dateutil import parser
-import os
-os.chdir('/home/adrian/Python/ModernPython3Bootcamp/Various/')
+import settings
 
 
-dtypes = {
-    # 'Date':'datetime64[ns]',
-    '1': 'int8',
-    '2': 'int8',
-    '3': 'int8',
-    '4': 'int8',
-    '5': 'int8',
-    'Star1': 'int8',
-    'Star2': 'int8',
-}
 
-df = pd.read_csv('Draws/PastDraws.csv', dtype=dtypes, parse_dates=['Date'])
+df = pd.read_csv('PastDraws.csv', dtype=settings.DTYPES, parse_dates=['Date'])
 
 
 data=df[['Star1','Star2']].to_numpy()
@@ -35,32 +20,33 @@ print("Numbers:", unique)
 print("Counts:", counts)
 
 #
-#
-# x = np.arange(1,len(unique)+1) # the label locations; needs to start at 1, not 0
-# print(x)
-# bars=plt.bar(x, counts, width=0.5)
-#
-# plt.xticks(unique)
-# #plt.yticks(counts)
-# plt.title('Most drawn stars')
-# plt.xlabel('Number')
-# plt.ylabel('Count')
-#
-# def autolabel():
-#     """Attach a text label above each bar, displaying its height."""
-#     for bar in bars:
-#         height = bar.get_height()
-#         plt.annotate('{}'.format(height),
-#                     xy=(bar.get_x() + bar.get_width() / 2, height),
-#                     xytext=(0, 1),  # 1 points vertical offset
-#                     textcoords="offset points",
-#                     ha='center', va='bottom')
-#
-# autolabel()
-#
-# #plt.hist(counts, unique)
-#
-# plt.show()
+# ========================= Bar plot =============================================================
+x = np.arange(1,len(unique)+1) # the label locations; needs to start at 1, not 0
+print(x)
+bars=plt.bar(x, counts, width=0.5)
+
+plt.xticks(unique)
+#plt.yticks(counts)
+plt.title('Most drawn stars')
+plt.xlabel('Number')
+plt.ylabel('Count')
+
+def autolabel():
+    """Attach a text label above each bar, displaying its height."""
+    for bar in bars:
+        height = bar.get_height()
+        plt.annotate('{}'.format(height),
+                    xy=(bar.get_x() + bar.get_width() / 2, height),
+                    xytext=(0, 1),  # 1 points vertical offset
+                    textcoords="offset points",
+                    ha='center', va='bottom')
+
+autolabel()
+
+#plt.hist(counts, unique)
+
+plt.show()
+#==================================================================================================
 
 # ========================= Stem plot =============================================================
 stems = plt.stem(unique, counts, use_line_collection=True)
