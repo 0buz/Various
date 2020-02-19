@@ -16,33 +16,12 @@ from datetime import datetime
 from dateutil import parser
 from selenium.webdriver.common.keys import Keys
 
-url = 'http://www.cssdesk.com/kGm7S'
+url = 'https://www.investing.com/{}/{}-historical-data'
 
 driver = webdriver.Chrome()
 driver.get(url)
 
-iframe=driver.switch_to.frame('frame')
-el = driver.find_element_by_id("was-returns-reconciliation-report-start-date")
-el.clear()
-el.send_keys("2020-02-01")
-el.send_keys(Keys.ENTER)  # Separately
-
-# Tried without clear as well
-# no error but the date didn't change in the browser
-
-driver.execute_script("document.getElementById('was-returns-reconciliation-report-start-date').value = '2020-01-05'")
-
-WebDriverWait(driver, 20).until(driver.find_element_by_class_name('job-counter').text.strip() != '')
-
-#  Extract the total number of parcels from string e.g. "1 of 24"
-string=driver.find_element_by_xpath("//input[@name='DTLNavigator$txtFromTo']").get_attribute('value')
-#  split string in separate words; last word i.e. [-1] is the total number of records e.g. "24"
-total_records=string.split(' ')[-1]
-
-for record in range(int(total_records)):
-    # parse record here
-    driver.find_element_by_xpath("//input[@name='DTLNavigator$imageNext']").click()
-    time.sleep(0.5) # be nice to your source and don't load their server with numerous quick requests
+picker = driver.find_element_by_xpath("//div[@class='float_lang_base_1']")
 
 html=driver.page_source
 soup = BeautifulSoup(html, 'lxml')
@@ -53,8 +32,8 @@ items = soup.find_all(id='datalet_header_row')
 
 driver.close()
 driver.quit()
-
-
+wait = WebDriverWait(driver, 20)
+b = wait.until(EC.visibility_of_element_located((By.XPATH, '//tbody//tr')))
 from bs4 import BeautifulSoup
 
 page = "<span>Hello world</span><h1>Nice to see you</h1><span>no</span><span>Hello babe</span>"
@@ -91,21 +70,72 @@ start = time.process_time()
 df['rolling'] = df.groupby('i2')['x'].rolling(3).apply(lambda x: x[-3]*0.1+x[-2]*0.9).reset_index(level=0, drop=True).reindex(df.index)
 print("Rolling time:", time.process_time() - start)
 
-import re
-re.findall(r"[\w']+|[.,!?;]", "Hello, I'm a string!")
-['Hello', ',', "I'm", 'a', 'string', '!']
-
-import itertools as it
-
-l = it.combinations('ABCDEFGHIJKLMNOPQRSTUVWXYZÆØÅ', 3) #List of every 3-letter combination
-d = it.combinations('0123456789', 4)                    #List of every 4-digit combination
-print(list(l))
-print(list(d))
-
-l=list(l)
-joinl = [''.join(t) for t in l]
-print(list(joinl))
 
 
+import time
+from math import sqrt
 
+start = time.process_time()
+prime_numbers=[2]
+
+for k in range(5,101):
+    for i in range(2, int(sqrt(k))+2):
+        j=i
+        if k%i == 0:
+            break
+        else:
+            j+=1
+        if j==int(sqrt(k))+2:
+            prime_numbers.append(k)
+
+print(prime_numbers)
+print("Total: {:.10f}".format(time.process_time() - start))
+
+
+
+start = time.process_time()
+prime_numbers=[2]
+
+for k in range(3,100):
+    for i in range (0,len(prime_numbers)):
+        if prime_numbers[i] <= sqrt(k):
+            if k % prime_numbers[i] ==0:
+                k+=1
+                break
+            else:
+                i +=1
+        else:
+            value = k
+    if(value > max(prime_numbers)):
+        prime_numbers.append(value)
+
+print(prime_numbers)
+print("Total: {:.10f}".format(time.process_time() - start))
+
+
+def string():
+    text = "some random text [and I need this bit of txt] but I don't know how to continue [to get this bit as well]"
+    result=''
+    for j in range(len(text)):
+        if text[j] == '[':
+            new = text.find(']')
+            result = result + text[j+1:new]
+    return result
+
+
+
+x=string()
+print(x)
+
+def string():
+    text = "some random text [and I need this bit of txt] but I don't know how to continue [to get this bit as well]"
+    for i in text:
+        for j in range(len(text)):
+            if text[j] == '[':
+                new = text.find(']')
+                return(text[j+1:new])
+
+
+
+print(string())
 
