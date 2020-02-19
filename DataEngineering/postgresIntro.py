@@ -57,6 +57,7 @@ cur.execute("SELECT typname FROM pg_catalog.pg_type WHERE oid=25 or oid=700;")
 type_name_25 = cur.fetchone()[0]
 type_name_700 = cur.fetchone()[0]   # fetch the next row
 all_results = cur.fetchall()
+type_name_25 = cur.fetchone()[1]
 #=====================================================================================================================
 
 
