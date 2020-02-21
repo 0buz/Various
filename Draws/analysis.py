@@ -10,9 +10,18 @@ df = pd.read_csv('PastDraws.csv', dtype=settings.DTYPES, parse_dates=['Date'])
 data=df[['Star1','Star2']].to_numpy()
 
 #combinations = df[['Star1','Star2']].groupby(['Star1','Star2']).agg(['count'])
-combinations = df[['Star1','Star2']].groupby(['Star1','Star2']).size().sort_values(ascending=False)
-#combinations = df[['Star1','Star2']].groupby(['Star1','Star2']).apply(lambda x: x.count())
-df1 = df.groupby(['Star1','Star2']).size().to_frame()
+combinations = df[['Star1','Star2']].groupby(['Star1','Star2']).size()#.sort_values(ascending=False)
+
+count=df.groupby(['Star1','Star2']).size().to_frame('Star1-Star2 Count')
+df=pd.merge(df, count, on=['Star1','Star2']).sort_values(by='Date', ascending=False)
+
+df.to_csv('PastDraws_processed.csv', index=False, header=True)
+
+
+unstack=df.groupby(['Star1','Star2']).size().unstack(level='Star2', fill_value=0)
+
+df = df.groupby(['Star1','Star2']).value_count.reset_index(name='Count')
+df['Count']=df.groupby(['Star1']).size().to_frame('Count')
 
 
 cmb=combinations.plot.bar()
