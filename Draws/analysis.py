@@ -3,19 +3,37 @@ import numpy as np
 import matplotlib
 import matplotlib.pyplot as plt
 import settings
-
+from matplotlib.pyplot import figure
+#figure(num=None, figsize=(8, 6), dpi=80, facecolor='w', edgecolor='k')
 
 df = pd.read_csv('PastDraws.csv', dtype=settings.DTYPES, parse_dates=['Date'])
 data=df[['Star1','Star2']].to_numpy()
 
-combinations = df.groupby(['Star1','Star2']).size()#.sort_values(ascending=False)
+
+with open('PastDraws.csv') as f:
+    lines=f.readlines()
+print(lines[2:-1])
+for l in lines:
+    print(l)
+
+
+combinations = df.groupby(['Star1','Star2']).size().sort_values(ascending=False)
 unstack=df.groupby(['Star1','Star2']).size().unstack(level='Star2', fill_value=0)
+print(combinations.values)
 
+index=str(combinations.index)
+values=combinations.values
+
+for co in combinations:
+    print(co)
+
+plt.hist()
 cmb=combinations.plot.bar()
+# for x,y in zip(index,values):
+#     plt.annotate('{:.0f}'.format(y), xy=(x,y), xytext=(0,5), textcoords='offset points',ha='center')
 
-for x,y in zip(combinations):
-    plt.annotate('{:.0f}'.format(y), xy=(x,y), xytext=(0,5), textcoords='offset points',ha='center')
-
+#cmb.figure(figsize=(20,10)).show()
+plt.figure(figsize=(20,10))
 plt.show()
 
 
