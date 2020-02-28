@@ -9,13 +9,15 @@ from matplotlib.pyplot import figure
 df = pd.read_csv('PastDraws.csv', dtype=settings.DTYPES, parse_dates=['Date'])
 data=df[['Star1','Star2']].to_numpy()
 
+df=pd.DataFrame()
 
-with open('PastDraws.csv') as f:
-    lines=f.readlines()
-print(lines[2:-1])
-for l in lines:
-    print(l)
+start_time=pd.to_datetime("21:00:00").time
+stop_time=pd.to_datetime("14:30:00").time()
 
+df = df[~(df['Date'].dt.time >= start_time) & ~(df['Date'].dt.time <= stop_time)]
+
+df['Star1']=df['Star1'].astype(str).str.replace('6','0').astype(int)
+print(df['Date'])
 
 combinations = df.groupby(['Star1','Star2']).size().sort_values(ascending=False)
 unstack=df.groupby(['Star1','Star2']).size().unstack(level='Star2', fill_value=0)
