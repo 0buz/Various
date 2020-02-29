@@ -9,6 +9,21 @@ from matplotlib.pyplot import figure
 df = pd.read_csv('PastDraws.csv', dtype=settings.DTYPES, parse_dates=['Date'])
 data=df[['Star1','Star2']].to_numpy()
 
+data = data.astype('float')
+data[data == 6]=np.NaN
+
+print(data.dtype)
+
+print(data)
+
+for i in range(len(data)):
+    for j in range(len(data)):
+        if data[i,j]==6:
+            data[i,j]=np.nan
+
+
+
+print(df.iloc[2][2])
 df=pd.DataFrame()
 
 start_time=pd.to_datetime("21:00:00").time
@@ -38,6 +53,13 @@ cmb=combinations.plot.bar()
 plt.figure(figsize=(20,10))
 plt.show()
 
+df['x']="12,3"
+print(df['x'])
+
+df['x']=pd.to_numeric(df['x'])
+
+df.iloc[:,1:].apply(pd.to_numeric(df, downcast='integer'))
+print(df['x'])
 
 # # ========================= Bar plot =============================================================
 # stems = plt.stem(unique, counts, use_line_collection=True)
