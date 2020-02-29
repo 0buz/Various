@@ -9,30 +9,6 @@ from matplotlib.pyplot import figure
 df = pd.read_csv('PastDraws.csv', dtype=settings.DTYPES, parse_dates=['Date'])
 data=df[['Star1','Star2']].to_numpy()
 
-data = data.astype('float')
-data[data == 6]=np.NaN
-
-print(data.dtype)
-
-print(data)
-
-for i in range(len(data)):
-    for j in range(len(data)):
-        if data[i,j]==6:
-            data[i,j]=np.nan
-
-
-
-print(df.iloc[2][2])
-df=pd.DataFrame()
-
-start_time=pd.to_datetime("21:00:00").time
-stop_time=pd.to_datetime("14:30:00").time()
-
-df = df[~(df['Date'].dt.time >= start_time) & ~(df['Date'].dt.time <= stop_time)]
-
-df['Star1']=df['Star1'].astype(str).str.replace('6','0').astype(int)
-print(df['Date'])
 
 combinations = df.groupby(['Star1','Star2']).size().sort_values(ascending=False)
 unstack=df.groupby(['Star1','Star2']).size().unstack(level='Star2', fill_value=0)
