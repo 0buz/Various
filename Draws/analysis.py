@@ -9,15 +9,6 @@ from matplotlib.pyplot import figure
 df = pd.read_csv('PastDraws.csv', dtype=settings.DTYPES, parse_dates=['Date'])
 data=df[['Star1','Star2']].to_numpy()
 
-df=pd.DataFrame()
-
-start_time=pd.to_datetime("21:00:00").time
-stop_time=pd.to_datetime("14:30:00").time()
-
-df = df[~(df['Date'].dt.time >= start_time) & ~(df['Date'].dt.time <= stop_time)]
-
-df['Star1']=df['Star1'].astype(str).str.replace('6','0').astype(int)
-print(df['Date'])
 
 combinations = df.groupby(['Star1','Star2']).size().sort_values(ascending=False)
 unstack=df.groupby(['Star1','Star2']).size().unstack(level='Star2', fill_value=0)
@@ -38,6 +29,13 @@ cmb=combinations.plot.bar()
 plt.figure(figsize=(20,10))
 plt.show()
 
+df['x']="12,3"
+print(df['x'])
+
+df['x']=pd.to_numeric(df['x'])
+
+df.iloc[:,1:].apply(pd.to_numeric(df, downcast='integer'))
+print(df['x'])
 
 # # ========================= Bar plot =============================================================
 # stems = plt.stem(unique, counts, use_line_collection=True)
