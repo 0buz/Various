@@ -13,29 +13,29 @@ data=df[['Star1','Star2']].to_numpy()
 combinations = df.groupby(['Star1','Star2']).size().sort_values(ascending=False)
 unstack=df.groupby(['Star1','Star2']).size().unstack(level='Star2', fill_value=0)
 print(combinations.values)
+#
+# index=str(combinations.index)
+# values=combinations.values
+#combinations=combinations.to_frame()
+combinations.plot(kind='bar')
+#
+# for x,y in zip(combinations.index,combinations.values):
+#     print(type(x), x)
+#     print(type(y), y)
 
-index=str(combinations.index)
-values=combinations.values
+for x, y in combinations.items():
+    print(type(x), x)
+    print(type(y), y)
 
-for co in combinations:
-    print(co)
+#plt.xticks(range(0,len(combinations.index)), combinations.index)
 
-plt.hist()
-cmb=combinations.plot.bar()
-# for x,y in zip(index,values):
-#     plt.annotate('{:.0f}'.format(y), xy=(x,y), xytext=(0,5), textcoords='offset points',ha='center')
+for x,y in combinations.items():
+    plt.annotate('{:.0f}'.format(y), xy=(str(combinations.index.tolist()),y), xytext=(0,5), textcoords='offset points',ha='center')
 
 #cmb.figure(figsize=(20,10)).show()
-plt.figure(figsize=(20,10))
+#plt.figure(figsize=(20,10))
 plt.show()
 
-df['x']="12,3"
-print(df['x'])
-
-df['x']=pd.to_numeric(df['x'])
-
-df.iloc[:,1:].apply(pd.to_numeric(df, downcast='integer'))
-print(df['x'])
 
 # # ========================= Bar plot =============================================================
 # stems = plt.stem(unique, counts, use_line_collection=True)

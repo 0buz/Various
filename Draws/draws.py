@@ -35,7 +35,6 @@ def optimise_dtypes(dataframe):
         dataframe[int_col] = pd.to_numeric(dataframe[int_col], downcast='integer')  # change to optimal integer type
     return dataframe
 
-
 def all_draws():
     years = range(2004, 2021)
 
