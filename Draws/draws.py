@@ -8,22 +8,6 @@ import settings
 # print(os.getcwd())
 
 
-url = f'{settings.URL}'
-
-
-def mystring(year=100):
-    b_string=settings.URL.format(year=year)
-    return b_string
-
-s=mystring(855)
-
-print(f'{mystring(588)}')
-
-var = 42
-user_input = "The answer is {variable}"
-# in order to get The answer is 42, we can follow this method
-print (user_input.format(variable=var))
-
 def optimise_dtypes(dataframe):
     dates = dataframe['Date']
     dates = [re.sub('Euro Millions', '', str(date)) for date in dates]
@@ -40,7 +24,7 @@ def all_draws():
 
     df = pd.DataFrame()
     for year in years:
-        url = f'{settings.URL}'
+        url = settings.URL
         table = pd.read_html(url)[1]
         df = df.append(table).reset_index(drop=True)
     df = optimise_dtypes(df)
