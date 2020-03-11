@@ -4,9 +4,8 @@ from dateutil import parser
 import os
 import settings
 
-# os.chdir(settings.WORKING_DIR)
+#os.chdir(settings.WORKING_DIR)
 # print(os.getcwd())
-
 
 def optimise_dtypes(dataframe):
     dates = dataframe['Date']
@@ -24,7 +23,7 @@ def all_draws():
 
     df = pd.DataFrame()
     for year in years:
-        url = settings.URL
+        url = settings.URL.format(year=year)
         table = pd.read_html(url)[1]
         df = df.append(table).reset_index(drop=True)
     df = optimise_dtypes(df)
@@ -35,8 +34,9 @@ def all_draws():
 
 
 def latest_draw():
+    """Extract only the most recent draw."""
     dtypes = settings.DTYPES
-    url = settings.URL
+    url = settings.URL.format(year='2020')
     #url = f'http://www.lottology.com/europe/euromillions/?do=past-draws-archive&tab=&year=2020&group_num_selector=selected&numbers_selector_mode=add&numbers_selected='
     table = pd.read_html(url)[1]
     new_row = table.iloc[[0]] # get the latest draw results
@@ -54,8 +54,9 @@ def latest_draw():
 
 
 def year_draw(year='2020'):
+    """Extract only specified year data. Default year=2020"""
     dtypes = settings.DTYPES
-    url = settings.URL
+    url = settings.URL.format(year=year)
     #url = f'http://www.lottology.com/europe/euromillions/?do=past-draws-archive&tab=&year={year}&group_num_selector=selected&numbers_selector_mode=add&numbers_selected='
     this_year = pd.read_html(url)[1]
 
@@ -72,7 +73,6 @@ def year_draw(year='2020'):
 
 
 if __name__ == '__main__':
-
     if not os.path.isfile('PastDraws.csv'):
         draws_csv = all_draws()
     else:
