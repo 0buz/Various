@@ -60,7 +60,7 @@ def year_draw(year='2020'):
     #url = f'http://www.lottology.com/europe/euromillions/?do=past-draws-archive&tab=&year={year}&group_num_selector=selected&numbers_selector_mode=add&numbers_selected='
     this_year = pd.read_html(url)[1]
 
-    df = pd.read_csv('Draws/PastDraws.csv', dtype=dtypes, parse_dates=['Date'])
+    df = pd.read_csv('PastDraws.csv', dtype=dtypes, parse_dates=['Date'])
     df = optimise_dtypes(df)
 
     prev_years = df[df['Date'].dt.year != int(year)]
