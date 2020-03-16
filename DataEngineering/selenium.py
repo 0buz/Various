@@ -1,3 +1,10 @@
+import os
+#
+# os.environ.setdefault('DJANGO_SETTINGS_MODULE', 'evolution.settings')
+# # import sys
+# # sys.path.append('/home/adrian/all/evolution/')
+# os.getcwd()
+# # os.chdir("~/all/evolution/evolution")
 import re
 import time
 import logging
@@ -14,78 +21,327 @@ from bs4 import BeautifulSoup
 from csv import writer, reader, DictReader
 from datetime import datetime
 from dateutil import parser
-from selenium.webdriver.common.keys import Keys
+from datacode import settings
 
-url = 'https://www.investing.com/{}/{}-historical-data'
+url = settings.URL
+options = webdriver.ChromeOptions()
+options.add_argument('start-maximized')
+options.add_argument('disable-infobars')
+options.add_argument('--disable-notifications')
+# options.add_argument('--headless')
 
-driver = webdriver.Chrome()
+driver = webdriver.Chrome(chrome_options=options)
 driver.get(url)
 
-picker = driver.find_element_by_xpath("//div[@class='float_lang_base_1']")
+from selenium import webdriver
+import getpas
 
-html=driver.page_source
-soup = BeautifulSoup(html, 'lxml')
+options=webdriver.
 
-selector = '.datalet_header_row'
-job_descriptions = soup.select(selector)
-items = soup.find_all(id='datalet_header_row')
+options = webdriver.ChromeOptions()
+options.add_argument("start-maximized")
+options.add_argument(r"--user-data-dir=C:\Users\{}\AppData\Local\Google\Chrome\User Data".format(getpass.getuser()))
+driver = webdriver.Chrome(options=options, executable_path=r'C:\WebDrivers\chromedriver.exe')
+driver.get("https://www.google.com/")
 
-driver.close()
-driver.quit()
-wait = WebDriverWait(driver, 20)
-b = wait.until(EC.visibility_of_element_located((By.XPATH, '//tbody//tr')))
-from bs4 import BeautifulSoup
-
-page = "<span>Hello world</span><h1>Nice to see you</h1><span>no</span><span>Hello babe</span>"
-
-soup = BeautifulSoup(page)
-
-while len(soup.find_all('span')) > 0:
-    soup.span.extract()
-print(soup)
+driver.find_element_by_id('selAge').click()
 
 
-import pandas as pd
-from random import randint
-import time
+select = Select(driver.find_element_by_id('selAge'))
 
-# data (it takes some time to create [less than 1 minute in my computer])
-data1   = [[[[randint(0, 100) for i in range(randint(1, 2))] for i in range(randint(1, 3))] for i in range(500)] for i in range(100)]
-data2   = pd.DataFrame(
-    [
-        (i1, i2, i3, i4, x4)
-        for (i1, x1) in enumerate(data1)
-        for (i2, x2) in enumerate(x1)
-        for (i3, x3) in enumerate(x2)
-        for (i4, x4) in enumerate(x3)
-    ],
-    columns = ['i1', 'i2', 'i3', 'i4', 'x']
-)
-data2.drop(['i3', 'i4'], axis=1, inplace = True)
-df   = data2.set_index(['i1', 'i2']).sort_index()
+for option in select.options:
+  print(f"option.text == {option.text}")
 
-df.rolling
-## conflicting part of the code ##
-start = time.process_time()
-df['rolling'] = df.groupby('i2')['x'].rolling(3).apply(lambda x: x[-3]*0.1+x[-2]*0.9).reset_index(level=0, drop=True).reindex(df.index)
-print("Rolling time:", time.process_time() - start)
+select.select_by_index(7)
 
 
 
-import time
-from math import sqrt
+    def _output(self):
+        """  Returns preprocessed file output location + updated filename
+            # look for 'raw' at the start of the string (^)
+            # look for 'txt' at the end of the string ($)
+            # capture middle group for later use ((.*))
+            # replace with 'preprocessed' + captured group (\\1) + 'csv'"""
+        self.savepath = f"{settings.BASE_DIR + settings.IMPORTED_DIR}"
+        basename=self.basename
+        self.outputname = re.sub('^raw(.*)txt$', 'preprocessed\\1csv', basename)
+        return os.path.join(self.savepath, self.outputname)
 
-start = time.process_time()
-prime_numbers=[2]
+    def data_collect(self):
+        """Extracts the raw data and saves it to file."""
 
-for k in range(5,101):
-    for i in range(2, int(sqrt(k))+2):
-        j=i
-        if k%i == 0:
-            break
-        else:
-            j+=1
-        if j==int(sqrt(k))+2:
-            prime_numbers.append(k)
+        url = settings.URL
+        options = webdriver.ChromeOptions()
+        options.add_argument('start-maximized')
+        options.add_argument('disable-infobars')
+        options.add_argument('--disable-notifications')
+        #options.add_argument('--headless')
 
-print(prime_numbers
+        driver = webdriver.Chrome(chrome_options=options)
+        driver.get(url)
+
+        driver.find_element_by_id('selAge').click()
+        select = Select(driver.find_element_by_id('selAge'))
+        select.select_by_index(7)
+
+        # Location
+        driver.find_element_by_id('txtLoc').clear()
+
+        # Industry
+        driver.find_element_by_class_name('ui-dropdownchecklist-text').click()
+        checked = driver.find_element_by_id('ddcl-selInd-i0').get_property('checked')
+        if checked:
+            driver.find_element_by_id('ddcl-selInd-i0').click()
+
+        # ITC
+        checked = driver.find_element_by_id('ddcl-selInd-i14').get_property('checked')
+        if not checked:
+            driver.find_element_by_id('ddcl-selInd-i14').click()
+
+        # Keyword
+        #driver.find_element_by_id('txtKey').send_keys("jira")
+
+        # Search
+        driver.find_element_by_css_selector('.searchbcontain').click()
+
+        try:
+            WebDriverWait(driver, 20).until(
+                lambda driver: driver.find_element_by_class_name('job-counter').text.strip() != '')
+            job_counter = driver.find_element_by_class_name('job-counter').text
+            print(job_counter)
+        except SE.TimeoutException as err:
+            logging.getLogger("error_logger").error(f"Initial job_counter issue. {err}", exc_info=True)
+
+        count = 0
+        whilecount = 0
+        jids_old = []
+
+        with open(str(self), "w") as f:
+            while job_counter:
+                jobs = driver.find_elements_by_class_name('jobItem')
+                jids_new = [job.get_property('id') for job in jobs]
+                jids_diff = [jid for jid in jids_new if jid not in set(jids_old)]  # jids_new minus jids_old
+                job_counter = driver.find_element_by_class_name(
+                    'job-counter').text  # needs to be here otherwise the last batch will be ommited
+                whilecount += 1
+                for i, jid in enumerate(jids_diff):
+                    job = driver.find_element_by_id(jid)
+                    WebDriverWait(driver, 20).until(EC.invisibility_of_element((By.ID, 'EmailAlertPrompt')))
+                    # driver.execute_script("arguments[0].scrollIntoView(true);", job)
+
+                    # try:
+                    #     WebDriverWait(driver, 20).until(EC.presence_of_element_located((By.ID, jid)))
+                    #     ActionChains(driver).move_to_element(job).click(job.find_element_by_class_name('jobResultsTitle')).perform()
+                    #     # try_click(job,"job")
+                    #
+                    # except SE.MoveTargetOutOfBoundsException as err:
+                    #     logging.getLogger("error_logger").error(
+                    #         f"Timeout on job no. {count} >>> {job.text[:30]} >>> try click action.")
+                    #     logging.getLogger("error_logger").error(err)
+
+                    try:
+                        time.sleep(0.2)
+                        ActionChains(driver).move_to_element(job).click(job.find_element_by_class_name('jobResultsTitle')).perform()
+                        WebDriverWait(driver, 20).until(WaitForAttrValueChange((By.ID, 'jidval'), jid))
+                        loadedID = driver.find_element_by_id('jidval').get_property('value')
+
+                    except (SE.TimeoutException, SE.MoveTargetOutOfBoundsException) as err:
+                        logging.getLogger("error_logger").error(
+                            f"TimeoutException on job no. {count} >>> {job.text[:30]} >>> jid {jid} vs loadedID {loadedID}.")
+                        logging.getLogger("error_logger").error(err)
+                        # WebDriverWait(driver, 20).until(EC.presence_of_element_located((By.CLASS_NAME, 'ErrorLoadingJobImg')))
+                        # driver.execute_script("arguments[0].scrollIntoView(true);", driver.find_element_by_id(loadedID))
+
+                        #prev_jid = jids_diff[jids_diff.index(jid) - 1]
+                        prev_jid=jids_diff[i-1]
+                        prev_job = driver.find_element_by_id(prev_jid)
+
+                        ActionChains(driver).move_to_element(prev_job).click(
+                            prev_job.find_element_by_class_name('jobResultsTitle')).perform()   # <<<do this in a for loop?
+                        print(f"Clicked on prev_job {prev_jid}.")
+                        time.sleep(0.1)
+                        ActionChains(driver).move_to_element(job).click(
+                            job.find_element_by_class_name('jobResultsTitle')).perform()
+
+                        # WebDriverWait(driver, 20).until(EC.presence_of_element_located((By.ID, jid)))
+                        # ActionChains(driver).move_to_element(job).click(job).perform()
+                        WebDriverWait(driver, 20).until(WaitForAttrValueChange((By.ID, 'jidval'), jid))
+
+                    innerHTML = driver.find_element_by_id('JobDetailPanel').get_property('innerHTML')
+                    f.write("\n\nAdding job " + str(count) + innerHTML + "Added job")
+                    count += 1
+                    # ActionChains(driver).send_keys_to_element(job, Keys.ARROW_DOWN)
+                    # WebDriverWait(driver, 20).until(lambda driver: jid == loadedID)      # ensure the right job details loaded by checking the job ids
+                jids_old = jids_new
+
+        logging.getLogger("info_logger").info(f"{count} jobs extracted.")
+        driver.close()
+
+    def remove_white_space(self):
+        """Remove whitespace combination (\n followed by one or more \t) and replace with empty string in file."""
+        with open(str(self), 'r+') as f:
+            data = f.read()
+            data = re.sub(r'\n\t+', '', data)
+            f.seek(0)  # place cursor at the beginning
+            f.write(data)
+            f.truncate()  # remove and extra text left from the pre-edited version
+            # log confirmation of completion
+
+    def data_validate(self):
+        """Validates data integrity by ensuring each data block contains one of each html ids.
+        If html id does not exist, append block with html id in valid html structure."""
+        html_ids = settings.HTML_IDS
+
+        with open(str(self),"r") as f:
+            data = f.read()
+
+        blocks = re.findall("[\s\S]*?Added job", data)
+
+        with open(str(self), "w") as f:
+            f.seek(0)
+            for block in blocks:
+                for html_id_value in html_ids.values():
+                    append_string = f"<div><span id=\"{html_id_value}\" class=\"jd_value\"><a><span>Unknown</span></a><a></a></span></div> Added job"
+
+                    found = re.findall(html_id_value, block)
+                    if not found:
+                       # print(block)
+                        print("block=", len(block))
+                        block=re.sub("Added job",append_string,block)
+                        #block=block[:-(len(append_string)+41)] + append_string  # overwrite the end of the block with append_string
+                        print("block_updated>>>>>>>>>>", block)
+                f.write(block)
+            # log confirmation of completion
+
+    def data_to_csv(self):
+        """Extracts the relevant data from the raw file and saves the extracted data in csv format.
+        These will be further (pre)processed and/or uploaded to database via the REST API."""
+
+        start = time.process_time()
+        with open(str(self)) as f:
+            html = f.read()
+        print("Read raw file:", time.process_time() - start)
+
+        start = time.process_time()
+        soup = BeautifulSoup(html, 'lxml')
+        html_ids = settings.HTML_IDS
+        print("Build soup object:",time.process_time() - start)
+
+        start = time.process_time()
+        jobs = []
+
+        for html_id_key, html_id_value in html_ids.items():
+            items = soup.find_all(id=f"{html_id_value}")
+            #print(len(items))
+            # list comprehension on job columns with preprocessing in specific cases
+            column = [
+                re.sub(html_id_key.title(), "", item.get_text())
+                if (html_id_key == 'location') or (html_id_key == 'duration') or (html_id_key == 'start date') or (html_id_key == 'rate')
+                else ''.join(re.sub("\\/", "", item.get_text()).split()) if html_id_key == 'type'   # <<< remove any "/" and strip spaces
+                else item.get_text()
+                for item in items
+            ]
+            print(html_id_value, len(column))  # to be logged
+
+            jobs.append(column)  # append the separate lists to the main job list
+            #print(f"Col count in column:{len(jobs[0])}")
+
+        it=iter(jobs)
+        if not all(len(col) == len(next(it)) for col in it):    #ensure all columns has the same length before zipping
+            #raise ValueError(f"Columns don't have the same length in {self.file}")
+            print(f"Columns don't have the same length in {self.file}")
+
+        print("Jobs creation:",time.process_time() - start)
+
+        start = time.process_time()
+        rows = list(zip(*jobs))
+        #DataFile.file_records+=len(rows)
+        self.record_count=len(rows)
+        print("Zipping:",time.process_time() - start)
+        outfile = self._output()
+        print(f"There are {self.record_count} records in {outfile}.")
+
+        with open(outfile, "w") as f:
+            header = ['title', 'description', 'type', 'location', 'duration', 'start_date', 'rate', 'recruiter',
+                      'posted_date']
+            csv_writer = writer(f)
+            csv_writer.writerow(header)
+            for row in rows:
+                csv_writer.writerow(row)
+
+        logging.getLogger("info_logger").info(f"{outfile} created.")
+
+        return outfile
+
+    def db_import(self, work_file):
+        conn = psycopg2.connect(settings.DB_CREDENTIALS)
+        cur = conn.cursor()
+
+        with open(work_file, "r") as f:
+            print(f"Processing file {work_file}")
+            next(f)  # skip header
+            csv_reader = reader(f)  #csv.reader
+            for row in csv_reader:
+                #try:
+                    posted_date = parser.parse(row[-1])  # process other date formats
+                    created_date = datetime.now().strftime('%Y-%m-%d %H:%M:%S')
+                    cur.execute(
+                        "INSERT INTO jobmarket_job(title, description, type, location, duration, start_date, rate, recruiter, posted_date,created_date, owner_id) VALUES (%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s);",
+                        (row[:-1] + [posted_date, created_date, '2']))
+
+                # except Exception as err:
+                #     # if Exception, then rollback upload
+                #     success = False
+                #     current_latest_id = Job.objects.latest('id').id  # get what is now the latest ID
+                #     logging.getLogger("error_logger").error(f"{err}. Occurred at record {serializer}.")
+                #     items = Job.objects.filter(id__in=[id for id in range(latest_id + 1,
+                #                                                           current_latest_id + 1)])  # get all the successfully uploaded records and delete them
+                #     for item in items:
+                #         item.delete()
+                #         # logging.getLogger("error_logger").error(f"{item} record deleted.")
+                #     logging.getLogger("error_logger").error(f"Upload rolled back! {len(items)} records deleted.")
+                #     break
+
+        print(f"Processed file {work_file}")
+        conn.commit()
+        conn.close()
+
+        preprocdir = os.path.join(settings.BASE_DIR + settings.IMPORTED_DIR)
+        outputname = re.sub('^preprocessed(.*)csv$', 'imported\\1csv', os.path.basename(work_file))
+        new_file = os.path.join(preprocdir, outputname)
+        os.rename(work_file, new_file)
+
+
+
+def get_files(status):
+    """Get all files matching the status; filter out the ones that already have that status.
+    Status can be one of the following: raw, preprocessed, imported."""
+
+    if status not in ('raw','preprocessed','imported'):
+        raise ValueError(f"get_files function argument must be one of the following: raw, preprocessed, imported.")
+
+    rawdir = os.path.join(settings.BASE_DIR+settings.RAW_DIR)
+    procdir = os.path.join(settings.BASE_DIR + settings.IMPORTED_DIR)   #proc dir contains either preporcessed or imported files
+
+    proc_files = next(os.walk(procdir))[2]  #get only filename from walk tuple; returns list
+
+    # get all files that do not have a corresponding csv: if file name starts with {status} and the date part ([-12:-4]) does not already exist in the preproc file list
+    match_files = filter(
+        lambda match_file: match_file.startswith(status) and not re.findall(match_file[-12:-4], str(proc_files)),
+        os.listdir(rawdir))
+    return list(match_files)
+
+
+if __name__ == "__main__":
+    test = DataFile()
+    test.data_collect()
+    test.remove_white_space()
+    test.data_validate()
+    test.data_to_csv()
+
+    # validation=DataFile('validate_raw20191209.txt')
+    # validation.remove_white_space()
+    # validation.data_validate()
+    # validation.data_to_csv()
+
+
