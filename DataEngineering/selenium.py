@@ -8,10 +8,21 @@ from selenium.webdriver.support import expected_conditions as EC
 from selenium.common.exceptions import TimeoutException
 
 
+url='https://fasttimes.com.au/checkout/onepage/'
 driver = webdriver.Chrome()
-driver.get('https://www.investing.com/equities/oil---gas-dev-historical-data')
+driver.get(url)
+driver.refresh()
 
-try:
+driver.find_element_by_id('login:guest').click()
+#driver.find_element_by_xpath("//*[@id='shipping-method-buttons-container']/button").send_keys(u'\ue007')
+WebDriverWait(driver,20).until(EC.element_to_be_clickable((By.XPATH,"//*[@id='onepage-guest-register-button']")))
+driver.find_element_by_xpath("//*[@id='onepage-guest-register-button']").click()
+
+driver.find_element_by_xpath('//*[@id="billing-buttons-container"]/button').click()
+driver.find_element_by_xpath('//*[@id="shipping-buttons-container"]/button').click()
+WebDriverWait(driver,20).until(EC.element_to_be_clickable((By.XPATH,"//*[@id='shipping-method-buttons-container']/button")))
+driver.find_element_by_xpath("//*[@id='shipping-method-buttons-container']/button").click()
+try://
     popup = WebDriverWait(driver, 60).until(EC.visibility_of_element_located((By.CSS_SELECTOR, "i[class*='largeBannerCloser']")))
     popup.click()
 except TimeoutException as to:
