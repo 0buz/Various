@@ -1,141 +1,45 @@
-import re
-import time
-import logging
-import psycopg2
-from selenium import webdriver
-from selenium.webdriver.support.ui import WebDriverWait, Select
-from selenium.webdriver.common.by import By
-from selenium.webdriver.support import expected_conditions as EC
-from selenium.webdriver.common.keys import Keys
-from selenium.webdriver.common.action_chains import ActionChains
-from selenium.common import exceptions as SE
 from datetime import date
-from bs4 import BeautifulSoup
-from csv import writer, reader, DictReader
-from datetime import datetime
-from dateutil import parser
+from selenium import webdriver
 from selenium.webdriver.common.keys import Keys
+from selenium.common.exceptions import ElementClickInterceptedException
+from selenium.webdriver.common.by import By
+from selenium.webdriver.support.ui import WebDriverWait
+from selenium.webdriver.support import expected_conditions as EC
+from selenium.common.exceptions import TimeoutException
 
-url = 'https://www.investing.com/{}/{}-historical-data'
 
+url='https://fasttimes.com.au/checkout/onepage/'
 driver = webdriver.Chrome()
 driver.get(url)
+driver.refresh()
 
-picker = driver.find_element_by_xpath("//div[@class='float_lang_base_1']")
+driver.find_element_by_id('login:guest').click()
+#driver.find_element_by_xpath("//*[@id='shipping-method-buttons-container']/button").send_keys(u'\ue007')
+WebDriverWait(driver,20).until(EC.element_to_be_clickable((By.XPATH,"//*[@id='onepage-guest-register-button']")))
+driver.find_element_by_xpath("//*[@id='onepage-guest-register-button']").click()
 
-html=driver.page_source
-soup = BeautifulSoup(html, 'lxml')
+driver.find_element_by_xpath('//*[@id="billing-buttons-container"]/button').click()
+driver.find_element_by_xpath('//*[@id="shipping-buttons-container"]/button').click()
+WebDriverWait(driver,20).until(EC.element_to_be_clickable((By.XPATH,"//*[@id='shipping-method-buttons-container']/button")))
+driver.find_element_by_xpath("//*[@id='shipping-method-buttons-container']/button").click()
+try://
+    popup = WebDriverWait(driver, 60).until(EC.visibility_of_element_located((By.CSS_SELECTOR, "i[class*='largeBannerCloser']")))
+    popup.click()
+except TimeoutException as to:
+    print(to)
 
-selector = '.datalet_header_row'
-job_descriptions = soup.select(selector)
-items = soup.find_all(id='datalet_header_row')
+#driver.find_element_by_css_selector("i.popupCloseIcon").click()
+driver.find_element_by_css_selector("a[class*='login']").click()
+driver.find_element_by_id('loginFormUser_email').send_keys('myemail')
+driver.find_element_by_id('loginForm_password').send_keys('pass')
+driver.find_element_by_xpath("//div[@id='loginEmailSigning']//following-sibling::a[@class='newButton orange']").click()
 
-driver.close()
-driver.quit()
-wait = WebDriverWait(driver, 20)
-b = wait.until(EC.visibility_of_element_located((By.XPATH, '//tbody//tr')))
-from bs4 import BeautifulSoup
+driver.find_element_by_id('flatDatePickerCanvasHol').click()
+start_date = driver.find_element_by_id('startDate')
+start_date.send_keys(Keys.BACKSPACE*10)
+start_date.send_keys(date(2014,1,1).strftime("%d/%m/%Y"))
+driver.find_element_by_id('applyBtn').click()
+#driver.implicitly_wait(30)
 
-page = "<span>Hello world</span><h1>Nice to see you</h1><span>no</span><span>Hello babe</span>"
-
-soup = BeautifulSoup(page)
-
-while len(soup.find_all('span')) > 0:
-    soup.span.extract()
-print(soup)
-
-
-import pandas as pd
-from random import randint
-import time
-
-# data (it takes some time to create [less than 1 minute in my computer])
-data1   = [[[[randint(0, 100) for i in range(randint(1, 2))] for i in range(randint(1, 3))] for i in range(500)] for i in range(100)]
-data2   = pd.DataFrame(
-    [
-        (i1, i2, i3, i4, x4)
-        for (i1, x1) in enumerate(data1)
-        for (i2, x2) in enumerate(x1)
-        for (i3, x3) in enumerate(x2)
-        for (i4, x4) in enumerate(x3)
-    ],
-    columns = ['i1', 'i2', 'i3', 'i4', 'x']
-)
-data2.drop(['i3', 'i4'], axis=1, inplace = True)
-df   = data2.set_index(['i1', 'i2']).sort_index()
-
-df.rolling
-## conflicting part of the code ##
-start = time.process_time()
-df['rolling'] = df.groupby('i2')['x'].rolling(3).apply(lambda x: x[-3]*0.1+x[-2]*0.9).reset_index(level=0, drop=True).reindex(df.index)
-print("Rolling time:", time.process_time() - start)
-
-
-
-import time
-from math import sqrt
-
-start = time.process_time()
-prime_numbers=[2]
-
-for k in range(5,101):
-    for i in range(2, int(sqrt(k))+2):
-        j=i
-        if k%i == 0:
-            break
-        else:
-            j+=1
-        if j==int(sqrt(k))+2:
-            prime_numbers.append(k)
-
-print(prime_numbers)
-print("Total: {:.10f}".format(time.process_time() - start))
-
-
-
-start = time.process_time()
-prime_numbers=[2]
-
-for k in range(3,100):
-    for i in range (0,len(prime_numbers)):
-        if prime_numbers[i] <= sqrt(k):
-            if k % prime_numbers[i] ==0:
-                k+=1
-                break
-            else:
-                i +=1
-        else:
-            value = k
-    if(value > max(prime_numbers)):
-        prime_numbers.append(value)
-
-print(prime_numbers)
-print("Total: {:.10f}".format(time.process_time() - start))
-
-
-def string():
-    text = "some random text [and I need this bit of txt] but I don't know how to continue [to get this bit as well]"
-    result=''
-    for j in range(len(text)):
-        if text[j] == '[':
-            new = text.find(']')
-            result = result + text[j+1:new]
-    return result
-
-
-
-x=string()
-print(x)
-
-def string():
-    text = "some random text [and I need this bit of txt] but I don't know how to continue [to get this bit as well]"
-    for i in text:
-        for j in range(len(text)):
-            if text[j] == '[':
-                new = text.find(']')
-                return(text[j+1:new])
-
-
-
-print(string())
-
+WebDriverWait(driver,20).until(EC.visibility_of_element_located((By.CLASS_NAME, 'first left bold noWrap')))
+driver.find_element_by_css_selector('a.newBtn.LightGray.downloadBlueIcon.js-download-data').click()
