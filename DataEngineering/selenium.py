@@ -7,6 +7,18 @@ from selenium.webdriver.support.ui import WebDriverWait
 from selenium.webdriver.support import expected_conditions as EC
 from selenium.common.exceptions import TimeoutException
 
+import bs4
+browser = webdriver.Chrome()
+
+browser.get("https://www.cosicomodo.it/mercato/torino-hd/pages/tutte-le-categorie")
+html = bs4.BeautifulSoup(browser.page_source, "html.parser")
+print(html.contents)
+
+titles=html.find('div',class_='store-selector-header')
+table = html.find("table",class_="table table-bordered table-hover main_table_countries dataTable no-footer")
+
+for row in table:
+    print(row)
 
 url='https://fasttimes.com.au/checkout/onepage/'
 driver = webdriver.Chrome()
@@ -22,7 +34,7 @@ driver.find_element_by_xpath('//*[@id="billing-buttons-container"]/button').clic
 driver.find_element_by_xpath('//*[@id="shipping-buttons-container"]/button').click()
 WebDriverWait(driver,20).until(EC.element_to_be_clickable((By.XPATH,"//*[@id='shipping-method-buttons-container']/button")))
 driver.find_element_by_xpath("//*[@id='shipping-method-buttons-container']/button").click()
-try://
+try:
     popup = WebDriverWait(driver, 60).until(EC.visibility_of_element_located((By.CSS_SELECTOR, "i[class*='largeBannerCloser']")))
     popup.click()
 except TimeoutException as to:
