@@ -17,7 +17,7 @@ print(unstack)
 # index=str(combinations.index)
 # values=combinations.values
 # combinations=combinations.to_frame()
-combinations.plot(kind='bar')
+#combinations.plot(kind='bar')
 
 
 
@@ -79,20 +79,34 @@ print("Counts:", counts)
 # ==================================================================================================
 
 # ========================= Stem plot =============================================================
-stems = plt.stem(unique, counts, use_line_collection=True)
-plt.xticks(unique, unique)
+# stems = plt.stem(unique, counts, use_line_collection=True)
+# plt.xticks(unique, unique)
+# plt.title('Most drawn stars')
+# plt.xlabel('Number')
+# plt.ylabel('Count')
+# for x, y in zip(unique, counts):
+#     plt.annotate('{:.0f}'.format(y), xy=(x, y), xytext=(0, 5), textcoords='offset points', ha='center')
+#
+# plt.xticks(unique)  # ticks on x-axis are the individual 'unique' numbers
+# # plt.stem(unique, counts, use_line_collection=True)
+# plt.show()
+
+# ==================================================================================================
+N_points = 1000
+xx=np.random.randn(N_points)
+bins=[0,10,20,30,40,50,60,70,80,90,100,110]
+yy=4*xx+1
+hist=plt.hist(yy,unique)
+#plt.xticks(unique, unique)
 plt.title('Most drawn stars')
 plt.xlabel('Number')
 plt.ylabel('Count')
-for x, y in zip(unique, counts):
+for x, y in zip(unique,yy):
     plt.annotate('{:.0f}'.format(y), xy=(x, y), xytext=(0, 5), textcoords='offset points', ha='center')
 
 plt.xticks(unique)  # ticks on x-axis are the individual 'unique' numbers
 # plt.stem(unique, counts, use_line_collection=True)
-
-
-# ==================================================================================================
-
+plt.show()
 
 # =================== As pie chart =============================================================
 # plt.pie(counts, labels=unique, autopct='%1.1f%%',
