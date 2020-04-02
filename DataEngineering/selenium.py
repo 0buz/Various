@@ -10,6 +10,21 @@ from selenium.webdriver.common.action_chains import ActionChains
 import time
 import bs4
 
+path = "/home/quentin/bin/chromedriver"
+base_url = "https://www.investing.com/economic-calendar/"
+
+
+chrome_options = webdriver.ChromeOptions()
+chrome_options.add_argument('disable-infobars')
+chrome_options.add_argument('--disable-notifications')
+#chrome_options.add_argument("--headless")
+chrome_options.add_argument("--incognito")
+chrome_options.add_argument("--start-maximized")
+driver = webdriver.Chrome(options=chrome_options)
+driver.get(base_url)
+
+WebDriverWait(driver,20).until(EC.visibility_of_element_located((By.XPATH,"//div[@class='pdynamicbutton']//a[@class='call']")))
+driver.find_element_by_xpath("//div[@class='pdynamicbutton']//a[@class='call']").click()
 
 
 url='https://www.ryanair.com/ie/en/cheap-flights/?from=DUB&out-from-date=2020-03-31&out-to-date=2021-03-31&budget=150'
