@@ -10,27 +10,64 @@ from selenium.webdriver.common.action_chains import ActionChains
 import time
 import bs4
 
-path = "/home/quentin/bin/chromedriver"
-base_url = "https://www.investing.com/economic-calendar/"
 
+url='https://www.instagram.com/explore/tags/cars/?hl=en'
 
 chrome_options = webdriver.ChromeOptions()
 chrome_options.add_argument('disable-infobars')
 chrome_options.add_argument('--disable-notifications')
 #chrome_options.add_argument("--headless")
-chrome_options.add_argument("--incognito")
 chrome_options.add_argument("--start-maximized")
 driver = webdriver.Chrome(options=chrome_options)
-driver.get(base_url)
-
-WebDriverWait(driver,20).until(EC.visibility_of_element_located((By.XPATH,"//div[@class='pdynamicbutton']//a[@class='call']")))
-driver.find_element_by_xpath("//div[@class='pdynamicbutton']//a[@class='call']").click()
-
-
-url='https://www.ryanair.com/ie/en/cheap-flights/?from=DUB&out-from-date=2020-03-31&out-to-date=2021-03-31&budget=150'
-driver = webdriver.Chrome()
-
 driver.get(url)
+
+main_window = driver.current_window_handle
+
+a_tags=driver.find_elements_by_xpath("//div[@class='v1Nh3 kIKUG  _bz0w']//a")
+hrefs=[a_tag.get_attribute('href') for a_tag in a_tags]
+
+driver.execute_script("window.open();")
+driver.switch_to.window(driver.window_handles[1])
+driver.get(hrefs[0])
+driver.close()
+driver.switch_to.window(main_window)
+
+# WebDriverWait(driver,20).until(EC.visibility_of_element_located((By.XPATH,"//h2[@class='Whs(nw) Ov(h) Tov(e) Fz(19px) tdv2-applet-featurebar:h_Td(u)']")))
+# driver.find_element_by_xpath("//h2[@class='Whs(nw) Ov(h) Tov(e) Fz(19px) tdv2-applet-featurebar:h_Td(u)']").click()
+
+link = driver.find_element_by_xpath('//*[@class="tdv2-applet-featurebar Fz(m) C(#fff) Pos(r) D(b) Mb(22px) Whs(nw) Ov(h)"]')
+addr = driver.find_element_by_xpath('//*[@class="tdv2-applet-featurebar Fz(m) C(#fff) Pos(r) D(b) Mb(22px) Whs(nw) Ov(h)"]').get_attribute("href")
+
+link.send_keys(Keys.CONTROL + Keys.ENTER)
+
+signin=driver.find_element_by_id('header-signin-link')
+signin.send_keys(Keys.CONTROL + Keys.ENTER)
+signin.click()
+
+meteo=driver.find_elements_by_xpath("//*[@class='Ai(c) D(f) Jc(sb) Fz(13px) Py(0) Px(0)']")
+ActionChains(driver).move_to_element(meteo[0]).context_click().perform()
+meteo[0].send_keys(Keys.CONTROL + Keys.ENTER)
+
+
+ActionChains(driver).move_to_element(signin).context_click().perform()
+ActionChains(driver).move_to_element(signin).context_click().send_keys(Keys.ARROW_DOWN).send_keys(Keys.ENTER).perform()
+
+signin.send_keys(Keys.CONTROL + Keys.ENTER)
+
+# open new blank tab
+driver.execute_script("window.open();")
+
+# switch to the new window which is second in window_handles array
+driver.switch_to.window(driver.window_handles[1])
+
+# open successfully and close
+driver.get(addr)
+driver.close()
+
+# back to the main window
+driver.switch_to.window(main_window)
+driver.get(addr)
+
 
 WebDriverWait(driver,20).until(EC.element_to_be_clickable((By.XPATH,"//*[@icon-id='glyphs.earth']")))
 driver.find_element_by_xpath("//*[@icon-id='glyphs.earth']").click()
