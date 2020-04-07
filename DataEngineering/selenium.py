@@ -24,7 +24,19 @@ driver.get(url)
 main_window = driver.current_window_handle
 
 a_tags=driver.find_elements_by_xpath("//div[@class='v1Nh3 kIKUG  _bz0w']//a")
+div_tags=driver.find_elements_by_xpath("//div[@class='_9AhH0']")
 hrefs=[a_tag.get_attribute('href') for a_tag in a_tags]
+#parent.appendChild(el);
+
+script = '''
+var html = '<div id="div1">text</div>';
+html += '<a href="javascript: void(0)" id="a1">bla</a>';
+html += '<div id="dvi2">div2<div id="div3">div3</div></div>';
+
+var body_tag=document.getElementsByClassName('Nnq7C weEfm');
+body_tag[0].innerHTML = html;
+'''
+driver.execute_script(script)
 
 driver.execute_script("window.open();")
 driver.switch_to.window(driver.window_handles[1])
@@ -48,6 +60,8 @@ meteo=driver.find_elements_by_xpath("//*[@class='Ai(c) D(f) Jc(sb) Fz(13px) Py(0
 ActionChains(driver).move_to_element(meteo[0]).context_click().perform()
 meteo[0].send_keys(Keys.CONTROL + Keys.ENTER)
 
+iframe=driver.find_element_by_class_name('cke_wysiwyg_frame cke_reset')
+driver.switch_to.frame(iframe)
 
 ActionChains(driver).move_to_element(signin).context_click().perform()
 ActionChains(driver).move_to_element(signin).context_click().send_keys(Keys.ARROW_DOWN).send_keys(Keys.ENTER).perform()
