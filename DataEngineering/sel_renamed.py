@@ -10,14 +10,15 @@ from selenium.webdriver.common.action_chains import ActionChains
 import time
 import bs4
 
-
 url='https://www.instagram.com/explore/tags/cars/?hl=en'
 
 chrome_options = webdriver.ChromeOptions()
 chrome_options.add_argument('disable-infobars')
 chrome_options.add_argument('--disable-notifications')
 #chrome_options.add_argument("--headless")
-chrome_options.add_argument("--start-maximized")
+#chrome_options.add_argument("--start-maximized")
+chrome_options.add_argument("--width=1600")
+chrome_options.add_argument("--height=600")
 driver = webdriver.Chrome(options=chrome_options)
 driver.get(url)
 

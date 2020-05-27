@@ -10,6 +10,8 @@ from matplotlib.pyplot import figure
 df = pd.read_csv('PastDraws_processed.csv', dtype=settings.DTYPES, parse_dates=['Date'])
 data = df[['Star1', 'Star2']].to_numpy()
 
+df.to_c
+
 combinations = df.groupby(['Star1', 'Star2']).size().sort_values(ascending=False)
 unstack = df.groupby(['Star1', 'Star2']).size().unstack(level='Star2', fill_value=0)
 print(unstack)

@@ -69,7 +69,7 @@ def year_draw(year='2020'):
     all_years = optimise_dtypes(all_years)
     all_years.sort_values(by='Date', ascending=False, inplace=True)
 
-    return all_years.to_csv('PastDraws.csv', index=False, header=True)
+    return all_years.to_csv('PastDraws.csv', index=False)
 
 
 if __name__ == '__main__':

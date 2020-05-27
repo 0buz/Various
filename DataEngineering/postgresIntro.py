@@ -155,7 +155,7 @@ for item in table_description:
 
 
 
-
+query=""""SELECT id FROM table WHERE ratio = (SELECT MAX(ratio) FROM table WHERE name <> %s;"""
 
 
 
