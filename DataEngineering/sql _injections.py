@@ -83,3 +83,6 @@ runtime_prepare = timeit.timeit(prepared_insert, number=1)
 runtime_regular = timeit.timeit(regular_insert, number=1)
 
 #===============================================================================================================
+
+
+
